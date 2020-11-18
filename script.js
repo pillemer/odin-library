@@ -109,6 +109,9 @@ submitButton.addEventListener('click', () => {
         } 
     }
     const newBook = new Book(inputFields[0].value, inputFields[1].value, inputFields[2].value, inputFields[3].checked);
+    console.log('namefield value'+inputFields[0].value)
+    console.log('namefield value'+newBook.title)
+
     library.push(newBook); // add book to library
     document.querySelector('#input-field').style.display = 'none'
     addNewButton.style.display = 'inline-block';
