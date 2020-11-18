@@ -3,8 +3,8 @@ let library = []
 // book Class
 class Book {
     constructor(title, author, pages, read = false){
-        this.title = title;
-        this.author = author;
+        this.title = toTitle(title);
+        this.author = toTitle(author);
         this.pages = pages;
         this.read = read;
     }
@@ -14,26 +14,15 @@ class Book {
 }
 
 // test values 
-let theHobbit = new Book('The Hobbit', 'Brandon Sanderson', 310, false);
-let songOfAchiles = new Book('The Song of Achilles', 'J.R.R Tolkien', 416, true)
-let deadhouseGates = new Book('Deadhouse Gates', 'Madeline Miller', 943, true);
+let theHobbit = new Book('The hobbit', 'brandon sanderson', 310, false);
+let songOfAchiles = new Book('The song of Achilles', 'J.R.R Tolkien', 416, true)
+let deadhouseGates = new Book('Deadhouse Gates', 'madeline miller', 943, true);
 let bible = new Book('The Bible', 'God', 666, false);
 
 library.push(theHobbit)
 library.push(songOfAchiles)
 library.push(deadhouseGates)
 library.push(bible)
-
-// book constructor
-// function Book(title, author, pages, read = false) {
-//     this.title = title;
-//     this.author = author;
-//     this.pages = pages;
-//     this.read = read;
-//     this.info = function() {
-//         return [title, author, pages, read]
-//     }
-// }
 
 displayBooks(library); // initial display
 
@@ -93,6 +82,10 @@ function displayBooks (library) {
         container.appendChild(card);
     }
 }
+
+function toTitle(str) {
+    return str.replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
+  }
 
 const addNewButton = document.getElementById('addNew')
 addNewButton.addEventListener('click', () => {
