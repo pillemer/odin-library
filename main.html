@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href='style.css'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+</head>
+<body>
+    <a href="library.png"></a>
+    <p> L I B R A R Y<span></span></p>
+    <container id="wrapper">
+        <button id='addNew'>Add New Book</button>
+
+        <section id="input-field">
+            <div class="input-block">
+                <label for="title">Title</label><br>
+                <input type="text" name="title" id="title">
+            </div>
+
+            <div class="input-block">
+                <label for="author">Author</label><br>
+                <input type="text" name="author" id="author">
+            </div>
+
+            <div class="input-block">
+                <label for="pages">Number of Pages</label><br>
+                <input type="number" name="pages" id="pages">
+            </div>
+
+            <div class="input-block">
+                <input type="checkbox" name="isRead" id='isRead'>
+                <label for="isRead">Completed</label>
+            </div>
+
+            <button type="submit" id="submit">Add</button>
+            <button type="cancel" id="cancel">Cancel</button>
+        </section>
+    </container>    
+
+    <div id='container'>
+        <!-- this will be where the books are shown -->
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
