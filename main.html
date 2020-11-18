@@ -8,10 +8,11 @@
 </head>
 <body>
     <a href="library.png"></a>
-    <p> L I B R A R Y<span></span></p>
-    <container id="wrapper">
+    <div id='logo' title='Library'> LIBRARY<span></span></div>
+    <header id="wrapper">
         <button id='addNew'>Add New Book</button>
 
+        <!-- hidden form -->
         <section id="input-field">
             <div class="input-block">
                 <label for="title">Title</label><br>
@@ -36,11 +37,11 @@
             <button type="submit" id="submit">Add</button>
             <button type="cancel" id="cancel">Cancel</button>
         </section>
-    </container>    
+    </header>    
 
-    <div id='container'>
+    <main id='container'>
         <!-- this will be where the books are shown -->
-    </div>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>

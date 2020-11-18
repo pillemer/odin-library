@@ -45,7 +45,7 @@ function displayBooks (library) {
     for (let i = 0; i < library.length; i++) {
         currentBook = library[i];
         const card = document.createElement('div');
-        card.title = i;
+        card.title = currentBook.title;
         card.id = 'card'
         const contents = document.createElement('div');
         contents.className = 'content';
@@ -65,13 +65,17 @@ function displayBooks (library) {
             else { 
                 readButton.innerHTML = 'Mark as read'
             };
+            readButton.title = readButton.textContent
+            console.log(`update button title: ${readButton.innerHTML}`)
         })
-
+        readButton.title = readButton.textContent
         contents.appendChild(readButton);
+        
         // add a 'remove from library' button
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = 'Remove'
         deleteButton.id = `delete${i}`;
+        deleteButton.title = 'remove book from library'
         deleteButton.className = 'deleteButton button';
         deleteButton.addEventListener('click', function() {
             library.splice(i, 1)
@@ -109,9 +113,6 @@ submitButton.addEventListener('click', () => {
         } 
     }
     const newBook = new Book(inputFields[0].value, inputFields[1].value, inputFields[2].value, inputFields[3].checked);
-    console.log('namefield value'+inputFields[0].value)
-    console.log('namefield value'+newBook.title)
-
     library.push(newBook); // add book to library
     document.querySelector('#input-field').style.display = 'none'
     addNewButton.style.display = 'inline-block';

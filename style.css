@@ -1,20 +1,37 @@
-body {
-    background: url('wodd.png');
-    background-size: auto;
-    /* font-family: 'Grenze', serif; */
-    /* font-family: 'Alfa Slab One', cursive;; */
-    /* background-color: rgb(173, 173, 173); */
-    /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+@font-face {
+    font-family: spaceGrotesk;
+    src: url(./fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf);
 }
 
-p {
-    color: white;
+body {
+    font-family: spaceGrotesk, sans-serif;
+    background: url('wodd.png');
+    background-size: auto;
+}
+
+#logo {
+    color: whitesmoke;
     text-shadow: 2px 2px 4px #000000;
     font-size: 50px;
     font-weight: bold;
     text-align: center;
-    padding-right: 150px;
-    padding-left: 150px;
+    letter-spacing: 50px;
+
+}
+
+header {
+    width: 100%;
+    height: 115px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #container {
@@ -22,7 +39,8 @@ p {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 30px;
-    font-size: 30px;
+    font-size: 25px;
+
 }
 
 #card {
@@ -58,7 +76,16 @@ button {
 button:hover {
     background-color: #4CAF50;
     color: white;
+    transform: scale(1.1);
   }
+
+#addNew {
+    color: whitesmoke;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80%;
+}
 
 .readButton {
     background-color: rgb(107, 201, 207);
@@ -72,6 +99,9 @@ button:hover {
     position: absolute;
     bottom: 20px;
     left: 20px;
+}
+.deleteButton:hover {
+    background-color: red;
 }
 
 #input-field {
