@@ -61,7 +61,6 @@ main {
 .content {
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
     padding-top: 30px;
     padding-left: 20px;
     padding-right: 40px;
@@ -70,9 +69,11 @@ main {
 button {
     background-color: tomato;
     border-style: none;
+    cursor: pointer;
+    outline: none;
     box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.2);
     border-radius: 5px;
-    transition-duration: 0.1s;
+    transition: ease-in-out 0.1s;
 }
 
 button:hover {
@@ -92,16 +93,19 @@ button:hover {
 .completeButton {
     background-color: rgb(107, 201, 207);
     border: 0;
-    outline: none;
     position: absolute;
     font-weight: 900;
     bottom: 20px;
     right: 39px;
 }
 
+.editButton {
+    position: absolute;
+    left: 110px;
+    bottom: 20px;
+}
+
 .deleteButton {
-    cursor: pointer;
-    border: 0;
     outline: none;
     color: tomato;
     background: black;
