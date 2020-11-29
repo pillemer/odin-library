@@ -25,13 +25,12 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-
 }
 
 main {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
 }
 
 #container {
@@ -43,7 +42,7 @@ main {
 
 }
 
-#card {
+.card {
     background-image: url(cover.png);
     background-size: cover;
     color: wheat;
@@ -82,13 +81,13 @@ button:hover {
     transform: scale(1.1);
   }
 
-#addNew {
+/* #addNew {
     color: whitesmoke;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 80%;
-}
+} */
 
 .completeButton {
     background-color: rgb(107, 201, 207);
@@ -119,7 +118,7 @@ button:hover {
 }
 
 #input-field {
-    display: none;
+    /* display: none; */
     padding-bottom: 30px;
 }
 
