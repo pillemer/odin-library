@@ -31,38 +31,10 @@ main {
     display: flex;
     align-items: left;
     justify-content: left;
-}
-
-#container {
-    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 30px;
-    font-size: 25px;
 
-}
-
-.card {
-    background-image: url(cover.png);
-    background-size: cover;
-    color: wheat;
-    display: flex;
-    flex-direction: column;
-    padding-top: 30px;
-    height: 300px;
-    width: 269px;
-    text-align: center;
-    background-color: transparent;
-    position: relative;
-    border-radius: 9px;
-}
-
-.content {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-top: 30px;
-    padding-left: 20px;
-    padding-right: 40px;
 }
 
 button {
@@ -79,15 +51,81 @@ button:hover {
     background-color: #4CAF50;
     color: white;
     transform: scale(1.1);
-  }
+}
 
-/* #addNew {
-    color: whitesmoke;
+.card {
+    font-size: 14pt;
+    background-image: url(cover.png);
+    background-size: cover;
+    color: wheat;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 80%;
-} */
+    flex-direction: column;
+    padding-top: 30px;
+    height: 300px;
+    width: 269px;
+    text-align: center;
+    background-color: transparent;
+    position: relative;
+    border-radius: 9px;
+}
+
+#addNewButton {
+    background-color: transparent;
+    box-shadow: none;
+    color: blue;
+    font-size: 100pt;
+    outline: none;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 250px;
+}
+
+.content {
+    margin-left: 15px;
+    margin-right: 35px;
+    margin-top: 6px;
+}
+
+.content > p {
+    margin-top: 30px;
+    max-height: 4rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::placeholder {
+    color: wheat;
+}
+
+#input-field {
+    display: none;
+    margin-left: 5px;
+    margin-right: 35px;
+    margin-top: 6px;
+}
+
+input {
+    text-align: center;
+    align-content: center;
+    background-color: transparent;
+    border-style: double;
+    border-radius: 5px;
+    outline-style: none;
+    font-size: inherit;
+    width: 210px;
+    box-sizing: border-box;
+    margin: 15px 15px 15px;
+}
+
+input#title {
+    margin-top: 30px;
+}
 
 .completeButton {
     background-color: rgb(107, 201, 207);
@@ -115,14 +153,4 @@ button:hover {
 }
 .deleteButton:hover {
     background-color: red;
-}
-
-#input-field {
-    /* display: none; */
-    padding-bottom: 30px;
-}
-
-.input-block {
-    display: inline-block;
-    padding-bottom: 30px;
 }

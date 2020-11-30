@@ -24,78 +24,101 @@ function updateDisplay() {
     displayBooks(library);
 }
 
+function createBookCard (book, index) {
+    // create a card for the book
+    const card = document.createElement("div");  
+    card.title = book.title;
+    card.className = "card";
+
+    // create a display for the card
+    const contents = document.createElement("div");  
+    contents.className = "content";
+
+    //create 'Book Title' paragraph
+    const bookTitle = document.createElement('p');
+    bookTitle.textContent = `"${book.title}"`;
+    bookTitle.title = `Title: "${book.title}"`;
+    bookTitle.setAttribute('class', 'bookTitle');
+    // create 'Book Author' paragraph
+    const bookAuthor = document.createElement('p');
+    bookAuthor.textContent = book.author;
+    bookAuthor.title = `Author: "${book.author}"`;
+    bookAuthor.setAttribute('class', 'bookAuthor');
+    // create 'Book Page Count paragraph
+    const bookLength = document.createElement('p');
+    bookLength.textContent = `${book.total_pages} pages`;
+    bookLength.title = `No. of pages: ${book.total_pages}`;
+    bookLength.setAttribute('class', 'bookLength');
+
+    contents.append(bookTitle, bookAuthor, bookLength)
+    // maybe add an option to edit on clicking? ^
+
+    // add a 'mark as complete/incomplete' button
+    const completeButton = document.createElement("button");
+    if (book.complete) {
+        completeButton.textContent = "Done";
+        completeButton.setAttribute('title', "Mark as Incomplete");
+    } else {
+        completeButton.textContent = "Not";
+        completeButton.setAttribute('title', "Mark as Complete");
+    }
+    completeButton.setAttribute('id', `complete ${index}`);
+    completeButton.setAttribute('class', "completeButton button");
+    completeButton.addEventListener("click", toggleComplete);
+    contents.appendChild(completeButton);
+
+    // add a 'remove from library' button
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "X";
+    deleteButton.setAttribute('title', "remove book from library");
+    deleteButton.setAttribute('id', `remove ${index}`);
+    deleteButton.setAttribute('class', "deleteButton button");
+    deleteButton.addEventListener("click", removeFromLibrary);
+    contents.appendChild(deleteButton);
+
+    // add an 'edit' button
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.setAttribute('title', 'Edit book details');
+    editButton.setAttribute('id', `edit ${index}`);
+    editButton.setAttribute('class', 'editButton button');
+    editButton.addEventListener('click', editContents);
+    contents.appendChild(editButton);
+
+    card.appendChild(contents);
+
+    return card;
+}
+
 function displayBooks() {
     const container = document.querySelector("main"); 
     createForm();
-    container.style.gridTemplateRows = `repeat(${library.length}, 1fr)`;
     for (let i = 0; i < library.length; i++) {
         let currentBook = library[i];
-
-        // create a card for the book
-        const card = document.createElement("div");  
-        card.title = currentBook.title;
-        card.className = "card";
-
-        // create a display for the card
-        const contents = document.createElement("div");  
-        contents.className = "content";
-
-        // TODO: break content into <p>s so you can set size limits and arrange them on the card
-        contents.innerHTML = `"${currentBook.title}"<br><br>${currentBook.author}<br><br>${currentBook.total_pages} pages<br>`;  
-
-        // add a 'mark as complete/incomplete' button
-        const completeButton = document.createElement("button");
-        if (currentBook.complete) {
-            completeButton.textContent = "Done";
-            completeButton.setAttribute('title', "Mark as Incomplete");
-        } else {
-            completeButton.textContent = "Not";
-            completeButton.setAttribute('title', "Mark as Complete");
-        }
-        completeButton.setAttribute('id', `complete ${i}`);
-        completeButton.setAttribute('class', "completeButton button");
-        completeButton.addEventListener("click", toggleComplete);
-        contents.appendChild(completeButton);
-
-        // add a 'remove from library' button
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "X";
-        deleteButton.setAttribute('title', "remove book from library");
-        deleteButton.setAttribute('id', `remove ${i}`);
-        deleteButton.setAttribute('class', "deleteButton button");
-        deleteButton.addEventListener("click", removeFromLibrary);
-        contents.appendChild(deleteButton);
-
-        // add an 'edit' button
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.setAttribute('title', 'Edit book details');
-        editButton.setAttribute('id', `edit ${i}`);
-        editButton.setAttribute('class', 'editButton button');
-        editButton.addEventListener('click', editContents);
-        contents.appendChild(editButton);
-
-        card.appendChild(contents);
+        let card = createBookCard(currentBook, i);
         container.appendChild(card);
     }
 }
 
-// possibly deprecated? 
-// // make form appear  
-// const addNewButton = document.getElementById("addNew");
-// addNewButton.addEventListener("click", () => {
-//     document.querySelector("#input-field").style.display = "inline-block";
-//     addNewButton.style.display = "none";
-// });
-
-// start of form
-
 function createForm() {
-    const newFormCard = document.createElement('div')
-    newFormCard.className = 'card';
-    newFormCard.id = 'newBookForm';
+    const formCard = document.createElement('div')
+    formCard.className = 'card';
+    formCard.id = 'newBookForm';
+    
+    // create the 'Add New' button
+    const addNewButton = document.createElement('button');
+    addNewButton.id = 'addNewButton';
+    addNewButton.title = 'Add new book to Library';
+    addNewButton.textContent = '+'
+    addNewButton.addEventListener("click", () => {
+            document.querySelector("#input-field").style.display = "initial";
+            addNewButton.style.display = "none";
+        });
+    formCard.appendChild(addNewButton)
+
+    // create the form 
     const newBookForm = document.createElement('form')
-    newBookForm.id = 'input-field' //possible value change needed here.
+    newBookForm.id = 'input-field' 
     
     // create 'Title' field
     const titleDiv = document.createElement('div');
@@ -130,7 +153,7 @@ function createForm() {
     const completedDiv = document.createElement('div');
     const completedLabel = document.createElement('label');
     const completedInput = document.createElement('input');
-    completedDiv.append(completedLabel, completedInput); // could be problematic on different browsers? 
+    completedDiv.append(completedInput, completedLabel); // could be problematic on different browsers? 
     completedLabel.textContent = 'Completed?';
     completedLabel.setAttribute('for', 'completed');
     completedInput.setAttribute('id', 'completed');
@@ -146,13 +169,16 @@ function createForm() {
 
     // create 'Cancel' button
     const cancelButton = document.createElement('button');
+    cancelButton.setAttribute('type', 'button');
     cancelButton.setAttribute('id', 'cancel');
     cancelButton.textContent = 'Cancel';
     cancelButton.formNoValidate = true;
-    cancelButton.addEventListener('click', 
-        () => // make the form invisible and show the big plus button instead
-        console.log('now you dont!')
-    ); 
+    cancelButton.addEventListener('click', () => { 
+        console.log(document.querySelector("#addNewButton"))
+        document.querySelector("#addNewButton").style.display = "block";
+        document.querySelector("#input-field").style.display = "none";
+        clearFormFields();
+    }); 
 
     // make it all one big happy div family
     newBookForm.append( titleDiv,  // 'append' could be problematic on different browsers? 
@@ -163,9 +189,9 @@ function createForm() {
                         cancelButton,
                         );
 
-    newFormCard.appendChild(newBookForm)
+    formCard.appendChild(newBookForm)
 
-    document.querySelector('main').appendChild(newFormCard);
+    document.querySelector('main').appendChild(formCard);
 
     // a similar function will create the edit for an existing book
 };
@@ -190,12 +216,19 @@ function addBookToLibrary() {
     );
 
     library.push(newBook);
-    setData(); // update local storage
-    // clearFormFields();
+    updateLocalStorage(); 
     updateDisplay();
 }
 
-// set all titles and authors to Title Case
+function clearFormFields() {
+    const fields = document.querySelectorAll("input");
+    for (let i = 0; i < fields.length - 1; i++) {
+        fields[i].value = "";
+        fields[fields.length - 1].checked = false;
+    }
+}
+
+// returns string with first letter of every word capitalised
 function toTitle(str) {
     str = str.toLowerCase();
     return str.replace(/(^|\s)\S/g, function (letter) {
@@ -207,7 +240,7 @@ function toggleComplete(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
     let book = library[index];
     book.complete = !book.complete;
-    setData(); // update local storage
+    updateLocalStorage();
 
     const button = document.getElementById(this.id)
     if (book.complete) {
@@ -222,7 +255,7 @@ function toggleComplete(event) {
 function removeFromLibrary(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
     library.splice(index, 1);
-    setData(); // update local storage
+    updateLocalStorage();
     updateDisplay();
 }
 
@@ -234,7 +267,7 @@ function editContents(event) {
 }
 
 // store library in local storage
-function setData() {
+function updateLocalStorage() {
     localStorage.setItem(`library`, JSON.stringify(library));
 }
 
