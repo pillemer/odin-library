@@ -92,7 +92,7 @@ function createBookCard (book, index) {
 
 function displayBooks() {
     const container = document.querySelector("main"); 
-    createForm();
+    container.appendChild(createForm());
     for (let i = 0; i < library.length; i++) {
         let currentBook = library[i];
         let card = createBookCard(currentBook, i);
@@ -151,6 +151,7 @@ function createForm() {
 
     // create 'Completed' checkbox 
     const completedDiv = document.createElement('div');
+    completedDiv.setAttribute('class','form-group')
     const completedLabel = document.createElement('label');
     const completedInput = document.createElement('input');
     completedDiv.append(completedInput, completedLabel); // could be problematic on different browsers? 
@@ -174,7 +175,6 @@ function createForm() {
     cancelButton.textContent = 'Cancel';
     cancelButton.formNoValidate = true;
     cancelButton.addEventListener('click', () => { 
-        console.log(document.querySelector("#addNewButton"))
         document.querySelector("#addNewButton").style.display = "block";
         document.querySelector("#input-field").style.display = "none";
         clearFormFields();
@@ -191,7 +191,7 @@ function createForm() {
 
     formCard.appendChild(newBookForm)
 
-    document.querySelector('main').appendChild(formCard);
+    return formCard
 
     // a similar function will create the edit for an existing book
 };
@@ -261,7 +261,7 @@ function removeFromLibrary(event) {
 
 function editContents(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
-    console.log(library[index].title)
+    console.log(event)
     // option 1: open up a modal to update the details
     // option 2: make the title, author and page count sections editable in place
 }

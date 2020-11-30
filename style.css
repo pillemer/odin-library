@@ -73,14 +73,20 @@ button:hover {
     background-color: transparent;
     box-shadow: none;
     color: blue;
-    font-size: 100pt;
+    font-size: 120pt;
     outline: none;
     margin: 0;
     position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    top: 25%;
+    /* -ms-transform: translateY(-50%);
+    transform: translateY(-50%); */
     width: 250px;
+    transition: ease-in-out 0.8s;
+
+}
+
+#addNewButton:hover {
+    transform: rotate(90deg);
 }
 
 .content {
