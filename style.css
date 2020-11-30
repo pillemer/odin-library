@@ -78,11 +78,8 @@ button:hover {
     margin: 0;
     position: absolute;
     top: 25%;
-    /* -ms-transform: translateY(-50%);
-    transform: translateY(-50%); */
     width: 250px;
     transition: ease-in-out 0.8s;
-
 }
 
 #addNewButton:hover {
@@ -119,10 +116,9 @@ button:hover {
 input {
     text-align: center;
     align-content: center;
-    background-color: transparent;
+    background: transparent;
     border-style: double;
     border-radius: 5px;
-    outline-style: none;
     font-size: inherit;
     width: 210px;
     box-sizing: border-box;

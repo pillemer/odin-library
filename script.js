@@ -28,6 +28,7 @@ function createBookCard (book, index) {
     // create a card for the book
     const card = document.createElement("div");  
     card.title = book.title;
+    card.id = book.title;
     card.className = "card";
 
     // create a display for the card
@@ -196,6 +197,9 @@ function createForm() {
     // a similar function will create the edit for an existing book
 };
 
+function updateBook() {
+    console.log(this.id)
+}
 
 function addBookToLibrary() {
     const inputFields = document.querySelectorAll("input");
@@ -261,9 +265,65 @@ function removeFromLibrary(event) {
 
 function editContents(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
-    console.log(event)
-    // option 1: open up a modal to update the details
-    // option 2: make the title, author and page count sections editable in place
+    let book = library[index]
+    const bookCard = document.getElementById(book.title);
+    // hide book card contents 
+    bookCard.querySelector('.content').style.display = "none";
+
+    // create the form 
+    const editBookForm = document.createElement('form')
+    editBookForm.id = 'update-input-field' 
+
+    // create 'Title' field
+    const titleDiv = document.createElement('div');
+    const titleinput = document.createElement('input');
+    titleDiv.appendChild(titleinput); 
+    titleinput.setAttribute('value', book.title);
+    titleinput.setAttribute('type', 'text');
+    titleinput.setAttribute('name', 'Edit Title')
+
+    // create 'Author' field
+    const authorDiv = document.createElement('div');
+    const authorinput = document.createElement('input');
+    authorDiv.appendChild(authorinput); 
+    authorinput.setAttribute('value', book.author)
+    authorinput.setAttribute('type', 'text');
+    authorinput.setAttribute('name', 'Edit Author')
+
+    // create 'Book Length' field
+    const bookLengthDiv = document.createElement('div');
+    const bookLengthinput = document.createElement('input');
+    bookLengthDiv.appendChild(bookLengthinput); 
+    bookLengthinput.setAttribute('value', book.total_pages);
+    bookLengthinput.setAttribute('type', 'number');
+    bookLengthinput.setAttribute('name', 'Edit Total Pages')
+    bookLengthinput.setAttribute('min', '0');
+    bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
+
+    // create 'Submit' button
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('type', 'button');
+    submitButton.textContent = 'Add'
+    submitButton.addEventListener("click", updateBook);
+
+    // create 'Cancel' button
+    const cancelButton = document.createElement('button');
+    cancelButton.setAttribute('type', 'button');
+    cancelButton.textContent = 'Cancel';
+    cancelButton.formNoValidate = true;
+    cancelButton.addEventListener('click', () => { 
+        bookCard.querySelector('.content').style.display = "block";
+        document.querySelector("#update-input-field").remove();
+    }); 
+
+    editBookForm.append(titleDiv, 
+                        authorDiv, 
+                        bookLengthDiv, 
+                        submitButton, 
+                        cancelButton,
+                        );
+                        
+    bookCard.appendChild(editBookForm)
 }
 
 // store library in local storage
