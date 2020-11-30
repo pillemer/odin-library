@@ -14,7 +14,7 @@ class Book {
       this.title = toTitle(title);
       this.author = toTitle(author);
       this.total_pages = total_pages;
-      this.rating = ""; // future feature
+      this.rating = ""; // future feature?
       this.complete = complete;
     }
   }
@@ -52,7 +52,6 @@ function createBookCard (book, index) {
     bookLength.setAttribute('class', 'bookLength');
 
     contents.append(bookTitle, bookAuthor, bookLength)
-    // maybe add an option to edit on clicking? ^
 
     // add a 'mark as complete/incomplete' button
     const completeButton = document.createElement("button");
@@ -197,9 +196,26 @@ function createForm() {
     // a similar function will create the edit for an existing book
 };
 
-function updateBook() {
-    console.log(this.id)
+function updateBook(event) {
+    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let book = library[index]
+    const inputs = document.getElementById('update-input-field').querySelectorAll('input') 
+    
+    // form validation
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+        alert("input cannot be left empty!");
+        return;
+        }
+    }
+
+    book.title = inputs[0].value;
+    book.author = inputs[1].value;
+    book.total_pages = inputs[2].value;
+    updateLocalStorage();
+    updateDisplay();
 }
+
 
 function addBookToLibrary() {
     const inputFields = document.querySelectorAll("input");
@@ -230,6 +246,10 @@ function clearFormFields() {
         fields[i].value = "";
         fields[fields.length - 1].checked = false;
     }
+}
+
+function validateFormFields() {
+
 }
 
 // returns string with first letter of every word capitalised
@@ -267,6 +287,7 @@ function editContents(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
     let book = library[index]
     const bookCard = document.getElementById(book.title);
+    console.log(bookCard)
     // hide book card contents 
     bookCard.querySelector('.content').style.display = "none";
 
@@ -281,6 +302,7 @@ function editContents(event) {
     titleinput.setAttribute('value', book.title);
     titleinput.setAttribute('type', 'text');
     titleinput.setAttribute('name', 'Edit Title')
+    titleinput.minlength = 1;
 
     // create 'Author' field
     const authorDiv = document.createElement('div');
@@ -289,6 +311,7 @@ function editContents(event) {
     authorinput.setAttribute('value', book.author)
     authorinput.setAttribute('type', 'text');
     authorinput.setAttribute('name', 'Edit Author')
+    authorinput.required = true;
 
     // create 'Book Length' field
     const bookLengthDiv = document.createElement('div');
@@ -299,10 +322,12 @@ function editContents(event) {
     bookLengthinput.setAttribute('name', 'Edit Total Pages')
     bookLengthinput.setAttribute('min', '0');
     bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
+    bookLengthinput.required = true;
 
     // create 'Submit' button
     const submitButton = document.createElement('button');
     submitButton.setAttribute('type', 'button');
+    submitButton.setAttribute('id', `update ${index}`)
     submitButton.textContent = 'Add'
     submitButton.addEventListener("click", updateBook);
 
