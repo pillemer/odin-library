@@ -1,7 +1,3 @@
-# odin-library
-Library assignment from the Odin Project
+# Mobile Library
+Add all your books and mark your progress!
 
-TODO:
-- update all the files from the inital project folder -DONE
-- get it working on GH-pages
-- add data storage ability
