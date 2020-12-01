@@ -1,19 +1,22 @@
 /* 
 
 TODO:
-- add ability to edit book info! 
+- DONE - add ability to edit book info! 
+- DONE - add bookmark bar to show how far along the book you are 
+- migrate the prompt to an html form for added control (then you can do the below)
+- automatically update the book.complete to true when done? 
 - add ability to rate book from 0 to 5 (starts 'unrated')
-- add bookmark bar to show how far along the book you are (will automatically update the book.complete to true when done?)
 - add ability to add tags to books
 - display / sort by tags
 
 */
 
 class Book {
-    constructor(title, author, total_pages, complete = false) {
+    constructor(title, author, pages_total, complete = false) {
       this.title = toTitle(title);
       this.author = toTitle(author);
-      this.total_pages = total_pages;
+      this.pages_total = pages_total;
+      this.pages_read = 0;
       this.rating = ""; // future feature?
       this.complete = complete;
     }
@@ -35,6 +38,27 @@ function createBookCard (book, index) {
     const contents = document.createElement("div");  
     contents.className = "content";
 
+    const progressBar = document.createElement('progress')
+    progressBar.setAttribute('max', book.pages_total);
+    progressBar.setAttribute('id', `progress ${index}`);
+    progressBar.setAttribute('value', book.pages_read);
+    progressBar.setAttribute('title', `You're on page ${book.pages_read} out of ${book.pages_total}.`)
+    progressBar.addEventListener("click", () => {
+
+
+
+        let pages_read = parseInt(prompt('What page are you on?'))
+        if (pages_read >= book.pages_total) {
+            pages_read = book.pages_total
+            toggleComplete();
+        } 
+        if ( pages_read < 0 | !pages_read ) { 
+            return }
+        book.pages_read = pages_read
+        updateLocalStorage();
+        updateDisplay();
+    });
+
     //create 'Book Title' paragraph
     const bookTitle = document.createElement('p');
     bookTitle.textContent = `"${book.title}"`;
@@ -47,11 +71,11 @@ function createBookCard (book, index) {
     bookAuthor.setAttribute('class', 'bookAuthor');
     // create 'Book Page Count paragraph
     const bookLength = document.createElement('p');
-    bookLength.textContent = `${book.total_pages} pages`;
-    bookLength.title = `No. of pages: ${book.total_pages}`;
+    bookLength.textContent = `${book.pages_total} pages`;
+    bookLength.title = `No. of pages: ${book.pages_total}`;
     bookLength.setAttribute('class', 'bookLength');
 
-    contents.append(bookTitle, bookAuthor, bookLength)
+    contents.append(progressBar, bookTitle, bookAuthor, bookLength)
 
     // add a 'mark as complete/incomplete' button
     const completeButton = document.createElement("button");
@@ -190,32 +214,8 @@ function createForm() {
                         );
 
     formCard.appendChild(newBookForm)
-
     return formCard
-
-    // a similar function will create the edit for an existing book
-};
-
-function updateBook(event) {
-    let index = (this.id).replace(/\D/g,''); //extract index number from button id
-    let book = library[index]
-    const inputs = document.getElementById('update-input-field').querySelectorAll('input') 
-    
-    // form validation
-    for (let i = 0; i < inputs.length; i++) {
-        if (inputs[i].value == "") {
-        alert("input cannot be left empty!");
-        return;
-        }
-    }
-
-    book.title = inputs[0].value;
-    book.author = inputs[1].value;
-    book.total_pages = inputs[2].value;
-    updateLocalStorage();
-    updateDisplay();
 }
-
 
 function addBookToLibrary() {
     const inputFields = document.querySelectorAll("input");
@@ -248,16 +248,32 @@ function clearFormFields() {
     }
 }
 
-function validateFormFields() {
-
-}
-
-// returns string with first letter of every word capitalised
 function toTitle(str) {
+    // returns string with first letter of every word capitalised
     str = str.toLowerCase();
     return str.replace(/(^|\s)\S/g, function (letter) {
         return letter.toUpperCase();
     });
+}
+
+function updateBook(event) {
+    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let book = library[index]
+    const inputs = document.getElementById('update-input-field').querySelectorAll('input') 
+    
+    // basic form validation
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+        alert("input cannot be left empty!");
+        return;
+        }
+    }
+
+    book.title = inputs[0].value;
+    book.author = inputs[1].value;
+    book.pages_total = inputs[2].value;
+    updateLocalStorage();
+    updateDisplay();
 }
 
 function toggleComplete(event) {
@@ -317,7 +333,7 @@ function editContents(event) {
     const bookLengthDiv = document.createElement('div');
     const bookLengthinput = document.createElement('input');
     bookLengthDiv.appendChild(bookLengthinput); 
-    bookLengthinput.setAttribute('value', book.total_pages);
+    bookLengthinput.setAttribute('value', book.pages_total);
     bookLengthinput.setAttribute('type', 'number');
     bookLengthinput.setAttribute('name', 'Edit Total Pages')
     bookLengthinput.setAttribute('min', '0');
@@ -351,13 +367,13 @@ function editContents(event) {
     bookCard.appendChild(editBookForm)
 }
 
-// store library in local storage
 function updateLocalStorage() {
+    // store library in local storage
     localStorage.setItem(`library`, JSON.stringify(library));
 }
 
-// pull library from local storage when page is refreshed
 function restoreFromLocalStorage() {
+    // pull library from local storage when page is refreshed
     if (!localStorage.library) {
         displayBooks(library);
     } 
