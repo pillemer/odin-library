@@ -3,9 +3,10 @@
 TODO:
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
-- migrate the prompt to an html form for added control (then you can do the below)
-- automatically update the book.complete to true when done? 
-- add ability to rate book from 0 to 5 (starts 'unrated')
+- migrate the prompt to an html form for added control. Then you can:
+    - automatically update the book.complete to true when done.
+- DONE add ability to rate book from 0 to 5 (starts 'unrated') 
+    - make it look better. maybe add tines and a bubble?
 - add ability to add tags to books
 - display / sort by tags
 
@@ -17,7 +18,7 @@ class Book {
       this.author = toTitle(author);
       this.pages_total = pages_total;
       this.pages_read = 0;
-      this.rating = ""; // future feature?
+      this.rating = "1";
       this.complete = complete;
     }
   }
@@ -38,6 +39,7 @@ function createBookCard (book, index) {
     const contents = document.createElement("div");  
     contents.className = "content";
 
+    // add a progress bar bookmark
     const progressBar = document.createElement('progress')
     progressBar.setAttribute('max', book.pages_total);
     progressBar.setAttribute('id', `progress ${index}`);
@@ -46,11 +48,10 @@ function createBookCard (book, index) {
     progressBar.addEventListener("click", () => {
 
 
-
+        // TODO: migrate this from prompt to an HTML popup form somehow
         let pages_read = parseInt(prompt('What page are you on?'))
         if (pages_read >= book.pages_total) {
             pages_read = book.pages_total
-            toggleComplete();
         } 
         if ( pages_read < 0 | !pages_read ) { 
             return }
@@ -58,6 +59,65 @@ function createBookCard (book, index) {
         updateLocalStorage();
         updateDisplay();
     });
+
+    //add a rating section  ☆★
+    const ratingsBar = document.createElement('div')
+    ratingsBar.className = 'slidecontainer';
+    const slider = document.createElement('input')
+    slider.setAttribute('type', 'range');
+    slider.setAttribute('min', '1');
+    slider.setAttribute('max', '5');
+    slider.setAttribute('value', book.rating)
+    slider.setAttribute('list', `list ${index}`)
+    slider.className = 'slider'
+    slider.setAttribute('title',`You gave this book ${book.rating} stars`)
+    slider.setAttribute('id', `rating ${index}`)
+    slider.oninput = function() {
+        book.rating = this.value
+        slider.setAttribute('title',`You gave this book ${book.rating} stars`)
+        updateLocalStorage();
+        // this.innerHTML = this.value;
+    }
+
+
+    // create ticks for the range slider? Currently not showing up.
+    const datalist = document.createElement('datalist');
+    datalist.setAttribute('id', `list ${index}`)
+    for (let i = 1; i <= slider.max; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.label = i;
+        datalist.appendChild(option)
+    }
+
+
+
+    ratingsBar.append(slider, datalist)
+
+
+ 
+ 
+    // ratingsBar.setAttribute('class', 'ratingBar');
+    // for (let i = 1; i < 6; i++) {
+    //     const star = document.createElement('input')
+    //     const starLabel = document.createElement('label')
+    //     star.setAttribute('type', 'radio')
+    //     star.setAttribute('id', `star ${index}${i}`)
+    //     starLabel.setAttribute('for',`star ${index}${i}`)
+    //     starLabel.setAttribute('class', 'ratingLabel')
+
+    //     ratingsBar.append(star, starLabel)
+        // star.addEventListener('click', () => {
+
+
+        //     const ratingDiv = document.getElementById(`rating ${index}`).querySelectorAll('.fa')
+        //     console.log(ratingDiv)
+        //     for (let i = 0; i < ratingDiv.length; i++) {
+                
+        //     }
+        //     star.classList.toggle('checked');
+        // });
+    
 
     //create 'Book Title' paragraph
     const bookTitle = document.createElement('p');
@@ -75,7 +135,7 @@ function createBookCard (book, index) {
     bookLength.title = `No. of pages: ${book.pages_total}`;
     bookLength.setAttribute('class', 'bookLength');
 
-    contents.append(progressBar, bookTitle, bookAuthor, bookLength)
+    contents.append(progressBar, ratingsBar, bookTitle, bookAuthor, bookLength)
 
     // add a 'mark as complete/incomplete' button
     const completeButton = document.createElement("button");
