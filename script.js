@@ -3,11 +3,10 @@
 TODO:
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
+- DONE add ability to rate book from 0 to 5 (starts 'unrated') 
+- add ability to add tags to books
 - migrate the prompt to an html form for added control. Then you can:
     - automatically update the book.complete to true when done.
-- DONE add ability to rate book from 0 to 5 (starts 'unrated') 
-    - make it look better. maybe add tines and a bubble?
-- add ability to add tags to books
 - display / sort by tags
 
 */
@@ -18,7 +17,8 @@ class Book {
       this.author = toTitle(author);
       this.pages_total = pages_total;
       this.pages_read = 0;
-      this.rating = "1";
+      this.rating = 0;
+      this.categories = ['rubberband','Fantasy'];
       this.complete = complete;
     }
   }
@@ -39,7 +39,7 @@ function createBookCard (book, index) {
     const contents = document.createElement("div");  
     contents.className = "content";
 
-    // add a progress bar bookmark
+    // add a progress bar
     const progressBar = document.createElement('progress')
     progressBar.setAttribute('max', book.pages_total);
     progressBar.setAttribute('id', `progress ${index}`);
@@ -47,8 +47,8 @@ function createBookCard (book, index) {
     progressBar.setAttribute('title', `You're on page ${book.pages_read} out of ${book.pages_total}.`)
     progressBar.addEventListener("click", () => {
 
-
         // TODO: migrate this from prompt to an HTML popup form somehow
+        
         let pages_read = parseInt(prompt('What page are you on?'))
         if (pages_read >= book.pages_total) {
             pages_read = book.pages_total
@@ -60,64 +60,23 @@ function createBookCard (book, index) {
         updateDisplay();
     });
 
-    //add a rating section  ☆★
+    //add a star rating  
     const ratingsBar = document.createElement('div')
-    ratingsBar.className = 'slidecontainer';
-    const slider = document.createElement('input')
-    slider.setAttribute('type', 'range');
-    slider.setAttribute('min', '1');
-    slider.setAttribute('max', '5');
-    slider.setAttribute('value', book.rating)
-    slider.setAttribute('list', `list ${index}`)
-    slider.className = 'slider'
-    slider.setAttribute('title',`You gave this book ${book.rating} stars`)
-    slider.setAttribute('id', `rating ${index}`)
-    slider.oninput = function() {
-        book.rating = this.value
-        slider.setAttribute('title',`You gave this book ${book.rating} stars`)
+    ratingsBar.className = 'rating-box';
+    ratingsBar.title = (((book.rating / 20) *10)/10) + ' stars';
+    const rating = document.createElement('div');
+    rating.className = 'rating';
+    rating.style.width = book.rating + '%'; // dislpay the rating
+    ratingsBar.setAttribute('id',`rating ${index}`)
+    ratingsBar.addEventListener('click', (event) => {
+        const bar = document.getElementById(`rating ${index}`)
+        const rated = bar.querySelector('.rating')
+        rated.style.width = event.layerX + '%' // set the width of the filled out stars
+        book.rating = event.layerX;
+        bar.title = ((book.rating / 20) *10)/10 + ' stars';
         updateLocalStorage();
-        // this.innerHTML = this.value;
-    }
-
-
-    // create ticks for the range slider? Currently not showing up.
-    const datalist = document.createElement('datalist');
-    datalist.setAttribute('id', `list ${index}`)
-    for (let i = 1; i <= slider.max; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.label = i;
-        datalist.appendChild(option)
-    }
-
-
-
-    ratingsBar.append(slider, datalist)
-
-
- 
- 
-    // ratingsBar.setAttribute('class', 'ratingBar');
-    // for (let i = 1; i < 6; i++) {
-    //     const star = document.createElement('input')
-    //     const starLabel = document.createElement('label')
-    //     star.setAttribute('type', 'radio')
-    //     star.setAttribute('id', `star ${index}${i}`)
-    //     starLabel.setAttribute('for',`star ${index}${i}`)
-    //     starLabel.setAttribute('class', 'ratingLabel')
-
-    //     ratingsBar.append(star, starLabel)
-        // star.addEventListener('click', () => {
-
-
-        //     const ratingDiv = document.getElementById(`rating ${index}`).querySelectorAll('.fa')
-        //     console.log(ratingDiv)
-        //     for (let i = 0; i < ratingDiv.length; i++) {
-                
-        //     }
-        //     star.classList.toggle('checked');
-        // });
-    
+    });
+    ratingsBar.appendChild(rating)
 
     //create 'Book Title' paragraph
     const bookTitle = document.createElement('p');
@@ -168,7 +127,6 @@ function createBookCard (book, index) {
     editButton.setAttribute('class', 'editButton button');
     editButton.addEventListener('click', editContents);
     contents.appendChild(editButton);
-
     card.appendChild(contents);
 
     return card;
@@ -363,7 +321,6 @@ function editContents(event) {
     let index = (this.id).replace(/\D/g,''); //extract index number from button id
     let book = library[index]
     const bookCard = document.getElementById(book.title);
-    console.log(bookCard)
     // hide book card contents 
     bookCard.querySelector('.content').style.display = "none";
 
@@ -400,6 +357,35 @@ function editContents(event) {
     bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
     bookLengthinput.required = true;
 
+    // WIP! trying to add a section to the edit form to add tags
+    // maybe instead of having a drop down menu I can just have a
+    // text field with the current tags as the placeholder?
+    // (if no tags > default placeholder)?
+
+    // create a 'tags' input field
+    const tagForm = document.createElement('form')
+    tagForm.setAttribute('id', `tagForm ${index}`);
+    const tagInput = document.createElement('input');
+    tagInput.setAttribute('list', `options ${index}`);
+    tagInput.setAttribute('id',`tags ${index}`);
+    const datalist = document.createElement('datalist');
+    datalist.setAttribute('id',`options ${index}`);
+    let options = book.categories;
+    for (const option of options){
+        tag = document.createElement('option');
+        tag.setAttribute('value',option);
+        datalist.appendChild(tag)
+    }
+    const addNewTag = document.createElement('button');
+    addNewTag.setAttribute('type','submit')
+    addNewTag.setAttribute('form', `tagForm ${index}`)
+    addNewTag.textContent = 'Tag'
+    tagForm.append(tagInput, addNewTag)
+
+
+
+
+
     // create 'Submit' button
     const submitButton = document.createElement('button');
     submitButton.setAttribute('type', 'button');
@@ -420,7 +406,9 @@ function editContents(event) {
     editBookForm.append(titleDiv, 
                         authorDiv, 
                         bookLengthDiv, 
-                        submitButton, 
+                        tagForm,
+                        datalist,
+                        submitButton,
                         cancelButton,
                         );
                         

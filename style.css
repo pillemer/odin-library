@@ -17,46 +17,34 @@ progress:hover {
     opacity: 1;
 }
 
-.slider {
-    background: transparent;
+.rating-box {
+    position:relative;
+    vertical-align: middle;
+    font-size: 1.2em;
+    font-family: FontAwesome;
+    display:inline-block;
+    color: #F68127;
+    opacity: 0.7;
 }
 
-.slider {
-    -webkit-appearance: none;  /* Override default CSS styles */
-    appearance: none;
-    width: 85%; /* Full-width */
-    height: 10px; /* Specified height */
-    outline: none; /* Remove outline */
-    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
-    transition: opacity .2s;
-  }
-  
-
-.slider:hover {
+.rating-box:hover {
     opacity: 1;
 }
-  
-  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
-    appearance: none;
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    border: 0;
-    border-radius: 25px;
-    background:url(star.png);
-    background-size: cover;
-    background-position: center;
-    cursor: pointer; /* Cursor on hover */
+
+.rating-box:before{
+    content: "\f006 \f006 \f006 \f006 \f006";
 }
-  
-  .slider::-moz-range-thumb {
-    width: 25px; /* Set a specific slider handle width */
-    height: 25px; /* Slider handle height */
-    background: url('./star.png'); /* Green background */
-    cursor: pointer; /* Cursor on hover */
+.rating-box .rating {
+    position: absolute;
+    left:0;
+    top:0;
+    white-space:nowrap;
+    overflow:hidden;
+    color: #F68127;
 }
+.rating-box .rating:before {
+    content: "\f005 \f005 \f005 \f005 \f005";
+    }
 
 #logo {
     color: whitesmoke;
