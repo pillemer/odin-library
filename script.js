@@ -1,5 +1,4 @@
 /* 
-
 TODO:
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
@@ -8,7 +7,10 @@ TODO:
 - migrate the prompt to an html form for added control. Then you can:
     - automatically update the book.complete to true when done.
 - display / sort by tags
-
+- get rid of the page count on the book cover (information already available in bookmark bar)
+- instead of having an edit button to edit the details, have each section
+  in the card open up a small form in its stead (click on the book name to 
+  a text field hiding the title, same for author, bookmark etc.)
 */
 
 class Book {
@@ -18,7 +20,7 @@ class Book {
       this.pages_total = pages_total;
       this.pages_read = 0;
       this.rating = 0;
-      this.categories = ['rubberband','Fantasy'];
+      this.categories = ['General','Fantasy']; // tags only for development phase
       this.complete = complete;
     }
   }
@@ -88,13 +90,14 @@ function createBookCard (book, index) {
     bookAuthor.textContent = book.author;
     bookAuthor.title = `Author: "${book.author}"`;
     bookAuthor.setAttribute('class', 'bookAuthor');
-    // create 'Book Page Count paragraph
-    const bookLength = document.createElement('p');
-    bookLength.textContent = `${book.pages_total} pages`;
-    bookLength.title = `No. of pages: ${book.pages_total}`;
-    bookLength.setAttribute('class', 'bookLength');
 
-    contents.append(progressBar, ratingsBar, bookTitle, bookAuthor, bookLength)
+    // create 'Book Page Count paragraph
+    // const bookLength = document.createElement('p');
+    // bookLength.textContent = `${book.pages_total} pages`;
+    // bookLength.title = `No. of pages: ${book.pages_total}`;
+    // bookLength.setAttribute('class', 'bookLength');
+
+    contents.append(progressBar, ratingsBar, bookTitle, bookAuthor)
 
     // add a 'mark as complete/incomplete' button
     const completeButton = document.createElement("button");
@@ -128,6 +131,41 @@ function createBookCard (book, index) {
     editButton.addEventListener('click', editContents);
     contents.appendChild(editButton);
     card.appendChild(contents);
+
+        
+    // WIP! trying to add a section to add tags and potentially sort or display by tag
+
+
+    // add a 'tag' button
+    const tagButton = document.createElement('button');
+    tagButton.textContent = 'Tag';
+    tagButton.setAttribute('title', 'Add tags');
+    tagButton.setAttribute('id', `tag ${index}`);
+    tagButton.setAttribute('class', 'tagButton button');
+    tagButton.addEventListener('click', tagBook);
+    contents.appendChild(tagButton)
+    
+    /*
+    // create a 'tags' input field
+    const tagForm = document.createElement('form')
+    tagForm.setAttribute('id', `tagForm ${index}`);
+    const tagInput = document.createElement('input');
+    tagInput.setAttribute('list', `options ${index}`);
+    tagInput.setAttribute('id',`tags ${index}`);
+    const datalist = document.createElement('datalist');
+    datalist.setAttribute('id',`options ${index}`);
+    let options = book.categories;
+    for (const option of options){
+        tag = document.createElement('option');
+        tag.setAttribute('value',option);
+        datalist.appendChild(tag)
+    }
+    const addNewTag = document.createElement('button');
+    addNewTag.setAttribute('type','submit')
+    addNewTag.setAttribute('form', `tagForm ${index}`)
+    addNewTag.textContent = 'Tag'
+    tagForm.append(tagInput, addNewTag)
+    */
 
     return card;
 }
@@ -275,9 +313,9 @@ function toTitle(str) {
 }
 
 function updateBook(event) {
-    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let index = extractID(this.id); //extract index number from button id
     let book = library[index]
-    const inputs = document.getElementById('update-input-field').querySelectorAll('input') 
+    const inputs = document.getElementById(`update-input-field${index}`).querySelectorAll('input') 
     
     // basic form validation
     for (let i = 0; i < inputs.length; i++) {
@@ -295,7 +333,7 @@ function updateBook(event) {
 }
 
 function toggleComplete(event) {
-    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let index = extractID(this.id); //extract index number from button id
     let book = library[index];
     book.complete = !book.complete;
     updateLocalStorage();
@@ -311,14 +349,69 @@ function toggleComplete(event) {
 }
 
 function removeFromLibrary(event) {
-    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let index = extractID(this.id); //extract index number from button id
     library.splice(index, 1);
     updateLocalStorage();
     updateDisplay();
 }
 
+function addTag(event) {
+    let index = extractID(this.id); //extract index number from button id
+    let book = library[index]
+    const input = document.getElementById(`add-tag-form ${index}`).querySelectorAll('input') 
+    
+    // basic form validation
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value == "") {
+        alert("input cannot be left empty!");
+        return;
+        }
+    }
+    
+    book.categories.push(input)
+}
+
+function tagBook(event) {
+    let index = extractID(this.id); //extract index number from button id
+    let book = library[index];
+    const bookCard = document.getElementById(book.title);
+    
+    // hide book card contents 
+    bookCard.querySelector('.content').style.display = "none";
+
+    // create a form 
+    const addTagForm = document.createElement('form');
+    addTagForm.setAttribute('id', `add-tag-form ${index}`)
+
+    // create an input field
+    const tagInput = document.createElement('input')
+    tagInput.setAttribute('type', 'text');
+    tagInput.setAttribute('name', 'Add label')
+
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('type', 'button');
+    submitButton.setAttribute('id', `add ${index}`)
+    submitButton.textContent = 'Save'
+    submitButton.addEventListener("click", addTag);
+
+    const doneButton = document.createElement('button');
+    doneButton.setAttribute('type', 'button');
+    doneButton.textContent = 'Cancel';
+    doneButton.formNoValidate = true;
+    doneButton.addEventListener('click', () => { 
+        bookCard.querySelector('.content').style.display = "block";
+        let index = extractID(this.id);
+        document.querySelector(`#add-tag-form ${index}`).remove();
+    }); 
+}
+
+function extractID(string) {
+    return string.replace(/\D/g,'');
+}
+
+
 function editContents(event) {
-    let index = (this.id).replace(/\D/g,''); //extract index number from button id
+    let index = extractID(this.id); //extract index number from button id
     let book = library[index]
     const bookCard = document.getElementById(book.title);
     // hide book card contents 
@@ -326,7 +419,7 @@ function editContents(event) {
 
     // create the form 
     const editBookForm = document.createElement('form')
-    editBookForm.id = 'update-input-field' 
+    editBookForm.id = `update-input-field${index}` 
 
     // create 'Title' field
     const titleDiv = document.createElement('div');
@@ -357,40 +450,11 @@ function editContents(event) {
     bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
     bookLengthinput.required = true;
 
-    // WIP! trying to add a section to the edit form to add tags
-    // maybe instead of having a drop down menu I can just have a
-    // text field with the current tags as the placeholder?
-    // (if no tags > default placeholder)?
-
-    // create a 'tags' input field
-    const tagForm = document.createElement('form')
-    tagForm.setAttribute('id', `tagForm ${index}`);
-    const tagInput = document.createElement('input');
-    tagInput.setAttribute('list', `options ${index}`);
-    tagInput.setAttribute('id',`tags ${index}`);
-    const datalist = document.createElement('datalist');
-    datalist.setAttribute('id',`options ${index}`);
-    let options = book.categories;
-    for (const option of options){
-        tag = document.createElement('option');
-        tag.setAttribute('value',option);
-        datalist.appendChild(tag)
-    }
-    const addNewTag = document.createElement('button');
-    addNewTag.setAttribute('type','submit')
-    addNewTag.setAttribute('form', `tagForm ${index}`)
-    addNewTag.textContent = 'Tag'
-    tagForm.append(tagInput, addNewTag)
-
-
-
-
-
     // create 'Submit' button
     const submitButton = document.createElement('button');
     submitButton.setAttribute('type', 'button');
     submitButton.setAttribute('id', `update ${index}`)
-    submitButton.textContent = 'Add'
+    submitButton.textContent = 'Save'
     submitButton.addEventListener("click", updateBook);
 
     // create 'Cancel' button
@@ -400,14 +464,13 @@ function editContents(event) {
     cancelButton.formNoValidate = true;
     cancelButton.addEventListener('click', () => { 
         bookCard.querySelector('.content').style.display = "block";
-        document.querySelector("#update-input-field").remove();
+        let index = extractID(this.id);
+        document.querySelector(`#update-input-field${index}`).remove();
     }); 
 
     editBookForm.append(titleDiv, 
                         authorDiv, 
                         bookLengthDiv, 
-                        tagForm,
-                        datalist,
                         submitButton,
                         cancelButton,
                         );
