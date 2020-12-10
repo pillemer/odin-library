@@ -2,8 +2,9 @@
 TODO:
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
-- DONE add ability to rate book from 0 to 5 (starts 'unrated') 
-- add ability to add tags to books
+- DONE - add ability to rate book from 0 to 5 (starts 'unrated') 
+- DONE - add ability to add tags to books
+- add ability to remove tags from books (close button deletes the tag.)
 - migrate the prompt to an html form for added control. Then you can:
     - automatically update the book.complete to true when done.
 - display / sort by tags
@@ -11,6 +12,9 @@ TODO:
 - instead of having an edit button to edit the details, have each section
   in the card open up a small form in its stead (click on the book name to 
   a text field hiding the title, same for author, bookmark etc.)
+
+BUGS:
+- clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
 */
 
 class Book {
@@ -142,32 +146,102 @@ function createBookCard (book, index) {
     tagButton.setAttribute('title', 'Add tags');
     tagButton.setAttribute('id', `tag ${index}`);
     tagButton.setAttribute('class', 'tagButton button');
-    tagButton.addEventListener('click', tagBook);
+    tagButton.addEventListener('click', displayTags);
     contents.appendChild(tagButton)
-    
-    /*
-    // create a 'tags' input field
-    const tagForm = document.createElement('form')
-    tagForm.setAttribute('id', `tagForm ${index}`);
-    const tagInput = document.createElement('input');
-    tagInput.setAttribute('list', `options ${index}`);
-    tagInput.setAttribute('id',`tags ${index}`);
-    const datalist = document.createElement('datalist');
-    datalist.setAttribute('id',`options ${index}`);
-    let options = book.categories;
-    for (const option of options){
-        tag = document.createElement('option');
-        tag.setAttribute('value',option);
-        datalist.appendChild(tag)
-    }
-    const addNewTag = document.createElement('button');
-    addNewTag.setAttribute('type','submit')
-    addNewTag.setAttribute('form', `tagForm ${index}`)
-    addNewTag.textContent = 'Tag'
-    tagForm.append(tagInput, addNewTag)
-    */
+
 
     return card;
+}
+
+function displayTags(event) {
+    let index = extractID(this.id); //extract index number from button id
+    let book = library[index];
+    const bookCard = document.getElementById(book.title);
+    
+    // hide book card contents 
+    bookCard.querySelector('.content').style.display = "none";
+    
+    // create tag input div
+    const tagEditContainer = document.createElement('div');
+    tagEditContainer.setAttribute('class', 'tag-edit-container');
+    tagEditContainer.setAttribute('id', `tag edit container ${index}`)
+    const tagContainer = document.createElement('div');
+    tagContainer.setAttribute('class', 'tag-container');
+    tagContainer.setAttribute('id', `tag container ${index}`)
+    const tagInput = document.createElement('input');
+    tagInput.setAttribute('id', `tag input ${index}`)
+    tagContainer.appendChild(tagInput);
+    tagInput.addEventListener('keyup', (event) => {
+        if(tagInput.value != '') {
+            if (event.key === 'Enter'){
+                event.target.value.split(',').forEach(tag => {
+                    book.categories.push(tag);
+                    updateLocalStorage();
+                });
+                addTags(event.target.id);
+                tagInput.value = '';
+            }
+        }
+    });
+    
+    // create 'Done' button
+    const doneButton = document.createElement('button');
+    doneButton.setAttribute('type', 'button');
+    doneButton.setAttribute('class', 'doneButton')
+    doneButton.setAttribute('id', `finish tagging ${index}`)
+    doneButton.textContent = 'Done'
+    doneButton.addEventListener("click", () => {
+        // updateBook();
+        bookCard.querySelector('.content').style.display = "block";
+        let index = extractID(this.id);
+        document.getElementById(`tag edit container ${index}`).remove();
+    }); 
+    tagEditContainer.append(tagContainer, doneButton)
+    
+    bookCard.appendChild(tagEditContainer)
+    
+    addTags(index);
+    tagInput.focus();
+}
+
+function addTag(id) {
+    let index = extractID(id); //extract index number from button id
+    let book = library[index]
+    book.categories.push(input.value)
+
+    // need to hide the form and display the contents again.
+
+}
+
+// removes already present tags before displaying the current ones
+function clearTags() {
+    document.querySelectorAll('.tag').forEach(tag => {
+        tag.parentElement.removeChild(tag);
+    })
+}
+
+function addTags(id) {
+    clearTags();
+    let index = extractID(id); //extract index number from id if needed
+    let book = library[index];
+    const tagContainer = document.getElementById(`tag container ${index}`)
+    book.categories.slice().reverse().forEach(tag => {
+        tagContainer.prepend(createTag(tag));
+    });
+}
+
+function createTag(label) {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'tag');
+    const span = document.createElement('span');
+    span.innerHTML = label;
+    const closeIcon = document.createElement('i');
+    closeIcon.innerHTML = 'close';
+    closeIcon.setAttribute('class', 'material-icons');
+    closeIcon.setAttribute('data-item', label);
+    div.appendChild(span);
+    div.appendChild(closeIcon);
+    return div;
 }
 
 function displayBooks() {
@@ -329,7 +403,7 @@ function updateBook(event) {
     book.author = inputs[1].value;
     book.pages_total = inputs[2].value;
     updateLocalStorage();
-    updateDisplay();
+    updateDisplay(); //currently this means saving changes while two edit fields are open closes them both
 }
 
 function toggleComplete(event) {
@@ -354,61 +428,6 @@ function removeFromLibrary(event) {
     updateLocalStorage();
     updateDisplay();
 }
-
-function addTag(event) {
-    let index = extractID(this.id); //extract index number from button id
-    let book = library[index]
-    const input = document.getElementById(`add-tag-form ${index}`).querySelectorAll('input') 
-    
-    // basic form validation
-    for (let i = 0; i < inputs.length; i++) {
-        if (inputs[i].value == "") {
-        alert("input cannot be left empty!");
-        return;
-        }
-    }
-    
-    book.categories.push(input)
-}
-
-function tagBook(event) {
-    let index = extractID(this.id); //extract index number from button id
-    let book = library[index];
-    const bookCard = document.getElementById(book.title);
-    
-    // hide book card contents 
-    bookCard.querySelector('.content').style.display = "none";
-
-    // create a form 
-    const addTagForm = document.createElement('form');
-    addTagForm.setAttribute('id', `add-tag-form ${index}`)
-
-    // create an input field
-    const tagInput = document.createElement('input')
-    tagInput.setAttribute('type', 'text');
-    tagInput.setAttribute('name', 'Add label')
-
-    const submitButton = document.createElement('button');
-    submitButton.setAttribute('type', 'button');
-    submitButton.setAttribute('id', `add ${index}`)
-    submitButton.textContent = 'Save'
-    submitButton.addEventListener("click", addTag);
-
-    const doneButton = document.createElement('button');
-    doneButton.setAttribute('type', 'button');
-    doneButton.textContent = 'Cancel';
-    doneButton.formNoValidate = true;
-    doneButton.addEventListener('click', () => { 
-        bookCard.querySelector('.content').style.display = "block";
-        let index = extractID(this.id);
-        document.querySelector(`#add-tag-form ${index}`).remove();
-    }); 
-}
-
-function extractID(string) {
-    return string.replace(/\D/g,'');
-}
-
 
 function editContents(event) {
     let index = extractID(this.id); //extract index number from button id
@@ -476,6 +495,10 @@ function editContents(event) {
                         );
                         
     bookCard.appendChild(editBookForm)
+}
+
+function extractID(string) {
+    return string.replace(/\D/g,'');
 }
 
 function updateLocalStorage() {
