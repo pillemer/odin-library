@@ -125,6 +125,7 @@ button:hover {
 }
 
 .content {
+    display: flexbox;
     margin-left: 15px;
     margin-right: 35px;
     margin-top: 6px;
@@ -138,10 +139,6 @@ button:hover {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.content > .bookAuthor {
-    -webkit-line-clamp: 1;
 }
 
 ::placeholder {
@@ -227,6 +224,7 @@ input#title {
     font-size: 10pt;
     display: flex;
     align-items: center;
+    cursor: default;
 }
 
 .tag i {

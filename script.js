@@ -4,8 +4,8 @@ TODO:
 - DONE - add bookmark bar to show how far along the book you are 
 - DONE - add ability to rate book from 0 to 5 (starts 'unrated') 
 - DONE - add ability to add tags to books
-- add ability to remove tags from books (close button deletes the tag.)
-- migrate the prompt to an html form for added control. Then you can:
+- DONE - add ability to remove tags from books (close button deletes the tag.)
+- migrate the page count prompt to an html form for added control. Then you can:
     - automatically update the book.complete to true when done.
 - display / sort by tags
 - get rid of the page count on the book cover (information already available in bookmark bar)
@@ -15,6 +15,7 @@ TODO:
 
 BUGS:
 - clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
+- clicking the tag button while the tags are open on another card makes them disappear
 */
 
 class Book {
@@ -24,7 +25,7 @@ class Book {
       this.pages_total = pages_total;
       this.pages_read = 0;
       this.rating = 0;
-      this.categories = ['General','Fantasy']; // tags only for development phase
+      this.categories = [];
       this.complete = complete;
     }
   }
@@ -136,10 +137,6 @@ function createBookCard (book, index) {
     contents.appendChild(editButton);
     card.appendChild(contents);
 
-        
-    // WIP! trying to add a section to add tags and potentially sort or display by tag
-
-
     // add a 'tag' button
     const tagButton = document.createElement('button');
     tagButton.textContent = 'Tag';
@@ -239,6 +236,14 @@ function createTag(label) {
     closeIcon.innerHTML = 'close';
     closeIcon.setAttribute('class', 'material-icons');
     closeIcon.setAttribute('data-item', label);
+    closeIcon.addEventListener('click', (event) => {
+        const index = extractID(event.target.parentNode.parentNode.id)
+        const book = library[index];
+        labelIndex = book.categories.indexOf(label)
+        book.categories.splice(labelIndex,1)
+        updateLocalStorage();
+        addTags(index);
+        })
     div.appendChild(span);
     div.appendChild(closeIcon);
     return div;
@@ -389,6 +394,7 @@ function toTitle(str) {
 function updateBook(event) {
     let index = extractID(this.id); //extract index number from button id
     let book = library[index]
+    const contents = document.getElementById(book.title).querySelector('.content');
     const inputs = document.getElementById(`update-input-field${index}`).querySelectorAll('input') 
     
     // basic form validation
@@ -400,10 +406,17 @@ function updateBook(event) {
     }
 
     book.title = inputs[0].value;
+    contents.querySelector('.bookTitle').innerHTML = book.title
+    contents.querySelector('.bookTitle').title = `Title: "${book.title}"`
     book.author = inputs[1].value;
+    contents.querySelector('.bookAuthor').innerHTML = book.author
+    contents.querySelector('.bookAuthor').title = `Author: "${book.author}"`
     book.pages_total = inputs[2].value;
     updateLocalStorage();
-    updateDisplay(); //currently this means saving changes while two edit fields are open closes them both
+    // remove the form
+    document.getElementById(`update-input-field${index}`).remove()
+    // display book card contents 
+    contents.style.display = "block";
 }
 
 function toggleComplete(event) {
