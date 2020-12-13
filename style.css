@@ -205,22 +205,30 @@ input#title {
 .tag-edit-container {
     margin-left: 18px;
     margin-top: 5px;
-    border: 2px solid #ccc;
     width: 78%;
     height: 80%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.tag-edit-container::-webkit-scrollbar { 
+    width: 0;
+    height: 0;
 }
 
 .tag-container {
     display: flex;
     flex-wrap: wrap;
+
 }
 
 .tag-container .tag {
     border: 2px solid #ccc;
     margin: 3px;
     padding: 5px;
-    height: 1rem;
-    border-radius: 3px;
+    height: 0.8rem;
+    border-radius: 4px;
     font-size: 10pt;
     display: flex;
     align-items: center;
@@ -239,8 +247,9 @@ input#title {
     border: none
 }
 
-/* .doneButton {
-    set to bottom of card.
-} */
-
+.doneButton {
+    position: absolute;
+    left: 100px;
+    bottom: 20px;
+}
 

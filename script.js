@@ -39,7 +39,7 @@ function createBookCard (book, index) {
     // create a card for the book
     const card = document.createElement("div");  
     card.title = book.title;
-    card.id = book.title;
+    card.id = `card ${index}`;
     card.className = "card";
 
     // create a display for the card
@@ -146,14 +146,12 @@ function createBookCard (book, index) {
     tagButton.addEventListener('click', displayTags);
     contents.appendChild(tagButton)
 
-
     return card;
 }
 
 function displayTags(event) {
     let index = extractID(this.id); //extract index number from button id
-    let book = library[index];
-    const bookCard = document.getElementById(book.title);
+    const bookCard = document.getElementById(`card ${index}`);
     
     // hide book card contents 
     bookCard.querySelector('.content').style.display = "none";
@@ -172,7 +170,7 @@ function displayTags(event) {
         if(tagInput.value != '') {
             if (event.key === 'Enter'){
                 event.target.value.split(',').forEach(tag => {
-                    book.categories.push(tag);
+                    library[index].categories.push(tag);
                     updateLocalStorage();
                 });
                 addTags(event.target.id);
@@ -191,37 +189,31 @@ function displayTags(event) {
         // updateBook();
         bookCard.querySelector('.content').style.display = "block";
         let index = extractID(this.id);
-        document.getElementById(`tag edit container ${index}`).remove();
+        document.getElementById(`tag edit container ${index}`).remove()
+        document.getElementById(`finish tagging ${index}`).remove();
     }); 
-    tagEditContainer.append(tagContainer, doneButton)
+    tagEditContainer.appendChild(tagContainer)
     
-    bookCard.appendChild(tagEditContainer)
+    bookCard.append(tagEditContainer, doneButton)
     
     addTags(index);
     tagInput.focus();
 }
 
-function addTag(id) {
-    let index = extractID(id); //extract index number from button id
-    let book = library[index]
-    book.categories.push(input.value)
-
-    // need to hide the form and display the contents again.
-
-}
-
 // removes already present tags before displaying the current ones
-function clearTags() {
-    document.querySelectorAll('.tag').forEach(tag => {
+function clearTags(container) {
+    let counter = 0;
+    container.querySelectorAll('.tag').forEach(tag => {
         tag.parentElement.removeChild(tag);
+        console.log(++counter)
     })
 }
 
 function addTags(id) {
-    clearTags();
     let index = extractID(id); //extract index number from id if needed
     let book = library[index];
     const tagContainer = document.getElementById(`tag container ${index}`)
+    clearTags(tagContainer);
     book.categories.slice().reverse().forEach(tag => {
         tagContainer.prepend(createTag(tag));
     });
@@ -281,12 +273,12 @@ function createForm() {
     
     // create 'Title' field
     const titleDiv = document.createElement('div');
-    const titleinput = document.createElement('input');
-    titleDiv.appendChild(titleinput); 
-    titleinput.setAttribute('placeholder', 'Book Title');
-    titleinput.setAttribute('id', 'title');
-    titleinput.setAttribute('type', 'text'); //set character limit?
-    titleinput.setAttribute('name', 'title')
+    const titleInput = document.createElement('input');
+    titleDiv.appendChild(titleInput); 
+    titleInput.setAttribute('placeholder', 'Book Title');
+    titleInput.setAttribute('id', 'title');
+    titleInput.setAttribute('type', 'text'); //set character limit?
+    titleInput.setAttribute('name', 'title')
 
     // create 'Author' field
     const authorDiv = document.createElement('div');
@@ -394,7 +386,7 @@ function toTitle(str) {
 function updateBook(event) {
     let index = extractID(this.id); //extract index number from button id
     let book = library[index]
-    const contents = document.getElementById(book.title).querySelector('.content');
+    const contents = document.getElementById(`card ${index}`).querySelector('.content');
     const inputs = document.getElementById(`update-input-field${index}`).querySelectorAll('input') 
     
     // basic form validation
@@ -445,7 +437,7 @@ function removeFromLibrary(event) {
 function editContents(event) {
     let index = extractID(this.id); //extract index number from button id
     let book = library[index]
-    const bookCard = document.getElementById(book.title);
+    const bookCard = document.getElementById(`card ${index}`);
     // hide book card contents 
     bookCard.querySelector('.content').style.display = "none";
 
@@ -455,12 +447,12 @@ function editContents(event) {
 
     // create 'Title' field
     const titleDiv = document.createElement('div');
-    const titleinput = document.createElement('input');
-    titleDiv.appendChild(titleinput); 
-    titleinput.setAttribute('value', book.title);
-    titleinput.setAttribute('type', 'text');
-    titleinput.setAttribute('name', 'Edit Title')
-    titleinput.minlength = 1;
+    const titleInput = document.createElement('input');
+    titleDiv.appendChild(titleInput); 
+    titleInput.setAttribute('value', book.title);
+    titleInput.setAttribute('type', 'text');
+    titleInput.setAttribute('name', 'Edit Title')
+    titleInput.minlength = 1;
 
     // create 'Author' field
     const authorDiv = document.createElement('div');
@@ -508,6 +500,7 @@ function editContents(event) {
                         );
                         
     bookCard.appendChild(editBookForm)
+    titleInput.focus();
 }
 
 function extractID(string) {
