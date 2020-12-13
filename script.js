@@ -15,7 +15,7 @@ TODO:
 
 BUGS:
 - clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
-- clicking the tag button while the tags are open on another card makes them disappear
+- DONE - clicking the tag button while the tags are open on another card makes them disappear
 */
 
 class Book {
@@ -113,36 +113,36 @@ function createBookCard (book, index) {
         completeButton.textContent = "Not";
         completeButton.setAttribute('title', "Mark as Complete");
     }
-    completeButton.setAttribute('id', `complete ${index}`);
     completeButton.setAttribute('class', "completeButton button");
+    completeButton.setAttribute('id', `complete ${index}`);
     completeButton.addEventListener("click", toggleComplete);
     contents.appendChild(completeButton);
-
-    // add a 'remove from library' button
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "X";
-    deleteButton.setAttribute('title', "remove book from library");
+    
+    // add a 'delete' button
+    const deleteButton = document.createElement('i');
+    deleteButton.innerHTML = 'delete_forever';
+    deleteButton.setAttribute('title', "Remove book from library");
+    deleteButton.setAttribute('class', 'material-icons-round deleteButton');
     deleteButton.setAttribute('id', `remove ${index}`);
-    deleteButton.setAttribute('class', "deleteButton button");
     deleteButton.addEventListener("click", removeFromLibrary);
     contents.appendChild(deleteButton);
 
     // add an 'edit' button
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
+    const editButton = document.createElement('i');
+    editButton.innerHTML = 'create';
     editButton.setAttribute('title', 'Edit book details');
+    editButton.setAttribute('class', 'material-icons-round editButton');
     editButton.setAttribute('id', `edit ${index}`);
-    editButton.setAttribute('class', 'editButton button');
     editButton.addEventListener('click', editContents);
     contents.appendChild(editButton);
     card.appendChild(contents);
 
     // add a 'tag' button
-    const tagButton = document.createElement('button');
-    tagButton.textContent = 'Tag';
+    const tagButton = document.createElement('i');
+    tagButton.innerHTML = 'label';
     tagButton.setAttribute('title', 'Add tags');
+    tagButton.setAttribute('class', 'material-icons-round tagButton');
     tagButton.setAttribute('id', `tag ${index}`);
-    tagButton.setAttribute('class', 'tagButton button');
     tagButton.addEventListener('click', displayTags);
     contents.appendChild(tagButton)
 
@@ -202,10 +202,8 @@ function displayTags(event) {
 
 // removes already present tags before displaying the current ones
 function clearTags(container) {
-    let counter = 0;
     container.querySelectorAll('.tag').forEach(tag => {
         tag.parentElement.removeChild(tag);
-        console.log(++counter)
     })
 }
 
