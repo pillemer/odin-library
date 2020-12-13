@@ -5,10 +5,11 @@ TODO:
 - DONE - add ability to rate book from 0 to 5 (starts 'unrated') 
 - DONE - add ability to add tags to books
 - DONE - add ability to remove tags from books (close button deletes the tag.)
-- migrate the page count prompt to an html form for added control. Then you can:
-    - automatically update the book.complete to true when done.
+- DONE - get rid of the page count on the book cover (information already available in bookmark bar)
+- DONE - switch all the buttons to <i> tags
+- migrate the page count prompt to an html form for added control.
 - display / sort by tags
-- get rid of the page count on the book cover (information already available in bookmark bar)
+- pressing the read/unread button updates the bookmark bar and vice versa
 - instead of having an edit button to edit the details, have each section
   in the card open up a small form in its stead (click on the book name to 
   a text field hiding the title, same for author, bookmark etc.)
@@ -42,7 +43,9 @@ function createBookCard (book, index) {
     card.id = `card ${index}`;
     card.className = "card";
 
-    // create a display for the card
+    const cardFace = document.createElement('container')
+    cardFace.className = 'cardFace'
+
     const contents = document.createElement("div");  
     contents.className = "content";
 
@@ -54,8 +57,8 @@ function createBookCard (book, index) {
     progressBar.setAttribute('title', `You're on page ${book.pages_read} out of ${book.pages_total}.`)
     progressBar.addEventListener("click", () => {
 
-        // TODO: migrate this from prompt to an HTML popup form somehow
-        
+        // TODO: migrate this from prompt to an HTML popup form
+
         let pages_read = parseInt(prompt('What page are you on?'))
         if (pages_read >= book.pages_total) {
             pages_read = book.pages_total
@@ -66,6 +69,7 @@ function createBookCard (book, index) {
         updateLocalStorage();
         updateDisplay();
     });
+    contents.appendChild(progressBar)    
 
     //add a star rating  
     const ratingsBar = document.createElement('div')
@@ -84,40 +88,27 @@ function createBookCard (book, index) {
         updateLocalStorage();
     });
     ratingsBar.appendChild(rating)
+    contents.appendChild(ratingsBar);
 
     //create 'Book Title' paragraph
     const bookTitle = document.createElement('p');
     bookTitle.textContent = `"${book.title}"`;
     bookTitle.title = `Title: "${book.title}"`;
     bookTitle.setAttribute('class', 'bookTitle');
+    contents.appendChild(bookTitle)
+
     // create 'Book Author' paragraph
     const bookAuthor = document.createElement('p');
     bookAuthor.textContent = book.author;
     bookAuthor.title = `Author: "${book.author}"`;
     bookAuthor.setAttribute('class', 'bookAuthor');
+    contents.appendChild(bookAuthor)
 
-    // create 'Book Page Count paragraph
-    // const bookLength = document.createElement('p');
-    // bookLength.textContent = `${book.pages_total} pages`;
-    // bookLength.title = `No. of pages: ${book.pages_total}`;
-    // bookLength.setAttribute('class', 'bookLength');
+    cardFace.appendChild(contents)
 
-    contents.append(progressBar, ratingsBar, bookTitle, bookAuthor)
+    const buttonDiv = document.createElement('div')
+    buttonDiv.setAttribute('class', 'cardButtons')
 
-    // add a 'mark as complete/incomplete' button
-    const completeButton = document.createElement("button");
-    if (book.complete) {
-        completeButton.textContent = "Done";
-        completeButton.setAttribute('title', "Mark as Incomplete");
-    } else {
-        completeButton.textContent = "Not";
-        completeButton.setAttribute('title', "Mark as Complete");
-    }
-    completeButton.setAttribute('class', "completeButton button");
-    completeButton.setAttribute('id', `complete ${index}`);
-    completeButton.addEventListener("click", toggleComplete);
-    contents.appendChild(completeButton);
-    
     // add a 'delete' button
     const deleteButton = document.createElement('i');
     deleteButton.innerHTML = 'delete_forever';
@@ -125,18 +116,8 @@ function createBookCard (book, index) {
     deleteButton.setAttribute('class', 'material-icons-round deleteButton');
     deleteButton.setAttribute('id', `remove ${index}`);
     deleteButton.addEventListener("click", removeFromLibrary);
-    contents.appendChild(deleteButton);
-
-    // add an 'edit' button
-    const editButton = document.createElement('i');
-    editButton.innerHTML = 'create';
-    editButton.setAttribute('title', 'Edit book details');
-    editButton.setAttribute('class', 'material-icons-round editButton');
-    editButton.setAttribute('id', `edit ${index}`);
-    editButton.addEventListener('click', editContents);
-    contents.appendChild(editButton);
-    card.appendChild(contents);
-
+    buttonDiv.appendChild(deleteButton);
+    
     // add a 'tag' button
     const tagButton = document.createElement('i');
     tagButton.innerHTML = 'label';
@@ -144,8 +125,34 @@ function createBookCard (book, index) {
     tagButton.setAttribute('class', 'material-icons-round tagButton');
     tagButton.setAttribute('id', `tag ${index}`);
     tagButton.addEventListener('click', displayTags);
-    contents.appendChild(tagButton)
+    buttonDiv.appendChild(tagButton)
+    
+    // add an 'edit' button
+    const editButton = document.createElement('i');
+    editButton.innerHTML = 'create';
+    editButton.setAttribute('title', 'Edit book details');
+    editButton.setAttribute('class', 'material-icons-round editButton');
+    editButton.setAttribute('id', `edit ${index}`);
+    editButton.addEventListener('click', editContents);
+    buttonDiv.appendChild(editButton);
 
+    // add a 'mark as complete/incomplete' button
+    const completeButton = document.createElement("i");
+    if (book.complete) {
+        completeButton.innerHTML = "check_circle_outline";
+        completeButton.setAttribute('title', "Mark as unread");
+    } else {
+        completeButton.innerHTML = "visibility";
+        completeButton.setAttribute('title', "Mark as Complete");
+    }
+    completeButton.setAttribute('class', "material-icons-round completeButton");
+    completeButton.setAttribute('id', `complete ${index}`);
+    completeButton.addEventListener("click", toggleComplete);
+    buttonDiv.appendChild(completeButton);
+    
+    cardFace.appendChild(buttonDiv);
+
+    card.appendChild(cardFace)
     return card;
 }
 
@@ -154,7 +161,7 @@ function displayTags(event) {
     const bookCard = document.getElementById(`card ${index}`);
     
     // hide book card contents 
-    bookCard.querySelector('.content').style.display = "none";
+    bookCard.querySelector('.cardFace').style.display = "none";
     
     // create tag input div
     const tagEditContainer = document.createElement('div');
@@ -180,14 +187,15 @@ function displayTags(event) {
     });
     
     // create 'Done' button
-    const doneButton = document.createElement('button');
+    const doneButton = document.createElement('i');
     doneButton.setAttribute('type', 'button');
-    doneButton.setAttribute('class', 'doneButton')
+    doneButton.innerHTML = 'done'
+    doneButton.setAttribute('title', 'Done')
+    doneButton.setAttribute('class', 'material-icons-round doneButton')
     doneButton.setAttribute('id', `finish tagging ${index}`)
-    doneButton.textContent = 'Done'
     doneButton.addEventListener("click", () => {
         // updateBook();
-        bookCard.querySelector('.content').style.display = "block";
+        bookCard.querySelector('.cardFace').style.display = "block";
         let index = extractID(this.id);
         document.getElementById(`tag edit container ${index}`).remove()
         document.getElementById(`finish tagging ${index}`).remove();
@@ -311,17 +319,19 @@ function createForm() {
     completedInput.setAttribute('name', 'completed');
 
     // create 'Submit' button
-    const submitButton = document.createElement('button');
+    const submitButton = document.createElement('i');
     submitButton.setAttribute('type', 'button');
     submitButton.setAttribute('id', 'submit');
-    submitButton.textContent = 'Add'
+    submitButton.setAttribute('class','material-icons-round')
+    submitButton.innerHTML = 'done'
     submitButton.addEventListener("click", addBookToLibrary);
 
     // create 'Cancel' button
-    const cancelButton = document.createElement('button');
+    const cancelButton = document.createElement('i');
     cancelButton.setAttribute('type', 'button');
     cancelButton.setAttribute('id', 'cancel');
-    cancelButton.textContent = 'Cancel';
+    cancelButton.setAttribute('class', 'material-icons-round')
+    cancelButton.innerHTML = 'close';
     cancelButton.formNoValidate = true;
     cancelButton.addEventListener('click', () => { 
         document.querySelector("#addNewButton").style.display = "block";
@@ -417,10 +427,10 @@ function toggleComplete(event) {
 
     const button = document.getElementById(this.id)
     if (book.complete) {
-        button.innerHTML = "Done";
+        button.innerHTML = "check_circle_outline";
         button.title = "Mark as Incomplete";
     } else {
-        button.innerHTML = "Not";
+        button.innerHTML = "visibility";
         button.title = "Mark as Complete";
     }
 }
@@ -437,7 +447,7 @@ function editContents(event) {
     let book = library[index]
     const bookCard = document.getElementById(`card ${index}`);
     // hide book card contents 
-    bookCard.querySelector('.content').style.display = "none";
+    bookCard.querySelector('.cardFace').style.display = "none";
 
     // create the form 
     const editBookForm = document.createElement('form')
@@ -473,19 +483,21 @@ function editContents(event) {
     bookLengthinput.required = true;
 
     // create 'Submit' button
-    const submitButton = document.createElement('button');
+    const submitButton = document.createElement('i');
     submitButton.setAttribute('type', 'button');
+    submitButton.setAttribute('class','material-icons-round')
     submitButton.setAttribute('id', `update ${index}`)
-    submitButton.textContent = 'Save'
+    submitButton.innerHTML = 'done'
     submitButton.addEventListener("click", updateBook);
 
     // create 'Cancel' button
-    const cancelButton = document.createElement('button');
+    const cancelButton = document.createElement('i');
     cancelButton.setAttribute('type', 'button');
-    cancelButton.textContent = 'Cancel';
+    cancelButton.setAttribute('class','material-icons-round')
+    cancelButton.innerHTML = 'close';
     cancelButton.formNoValidate = true;
     cancelButton.addEventListener('click', () => { 
-        bookCard.querySelector('.content').style.display = "block";
+        bookCard.querySelector('.cardFace').style.display = "initial";
         let index = extractID(this.id);
         document.querySelector(`#update-input-field${index}`).remove();
     }); 
