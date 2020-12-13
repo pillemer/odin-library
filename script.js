@@ -1,5 +1,7 @@
 /* 
 TODO:
+- migrate the whole sheband into webpack
+
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
 - DONE - add ability to rate book from 0 to 5 (starts 'unrated') 
