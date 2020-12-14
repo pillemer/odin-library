@@ -25,9 +25,9 @@ BUGS:
 
 /* imports*/
 import { Book } from './book';
-import { extractID, toggleComplete } from './helpers'
+import { extractID, setToggleImage } from './helpers'
 import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
-import { displayTags } from './tags'
+import { tagButton, completeButton } from './buttons'
 
 function updateDisplay() {
     document.querySelector("main").innerHTML = "";
@@ -116,14 +116,7 @@ function createBookCard (book, index) {
     deleteButton.addEventListener("click", removeFromLibrary);
     buttonDiv.appendChild(deleteButton);
     
-    // add a 'tag' button
-    const tagButton = document.createElement('i');
-    tagButton.innerHTML = 'label';
-    tagButton.setAttribute('title', 'Add tags');
-    tagButton.setAttribute('class', 'material-icons-round tagButton');
-    tagButton.setAttribute('id', `tag ${index}`);
-    tagButton.addEventListener('click', displayTags);
-    buttonDiv.appendChild(tagButton)
+    buttonDiv.appendChild(tagButton(index))
     
     // add an 'edit' button
     const editButton = document.createElement('i');
@@ -135,18 +128,9 @@ function createBookCard (book, index) {
     buttonDiv.appendChild(editButton);
 
     // add a 'mark as complete/incomplete' button
-    const completeButton = document.createElement("i");
-    if (book.complete) {
-        completeButton.innerHTML = "check_circle_outline";
-        completeButton.setAttribute('title', "Mark as unread");
-    } else {
-        completeButton.innerHTML = "visibility";
-        completeButton.setAttribute('title', "Mark as Complete");
-    }
-    completeButton.setAttribute('class', "material-icons-round completeButton");
-    completeButton.setAttribute('id', `complete ${index}`);
-    completeButton.addEventListener("click", toggleComplete);
-    buttonDiv.appendChild(completeButton);
+    const readButton = completeButton(index);
+    setToggleImage(readButton, book.complete);
+    buttonDiv.appendChild(readButton);
     
     cardFace.appendChild(buttonDiv);
 

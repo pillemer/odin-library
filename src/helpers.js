@@ -1,5 +1,3 @@
-import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
-
 export function toTitle(str) {
     // returns string with first letter of every word capitalised
     str = str.toLowerCase();
@@ -13,19 +11,12 @@ export function extractID(string) {
     return string.replace(/\D/g,'');
 }
 
-export function toggleComplete(event) {
-    let index = extractID(this.id);
-    let library = restoreFromLocalStorage();
-    let book = library[index];
-    book.complete = !book.complete;
-    updateLocalStorage(library);
-
-    const button = document.getElementById(this.id)
-    if (book.complete) {
+export function setToggleImage (button, read = false) {
+    if (read) {
         button.innerHTML = "check_circle_outline";
-        button.title = "Mark as Incomplete";
+        button.setAttribute('title', "Mark as Unread");
     } else {
         button.innerHTML = "visibility";
-        button.title = "Mark as Complete";
-    }
+        button.setAttribute('title', "Mark as Complete");
+    }   
 }
