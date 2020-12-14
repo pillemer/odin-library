@@ -1,6 +1,7 @@
 /* 
 TODO:
 - migrate the whole shebang into webpack
+- refactor all the code into modules
 - update GHpages to work with the webpacked version
 
 - DONE - add ability to edit book info! 
@@ -18,21 +19,15 @@ TODO:
   a text field hiding the title, same for author, bookmark etc.)
 
 BUGS:
-- clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
+- DONE - clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
 - DONE - clicking the tag button while the tags are open on another card makes them disappear
 */
 
-class Book {
-    constructor(title, author, pages_total, complete = false) {
-      this.title = toTitle(title);
-      this.author = toTitle(author);
-      this.pages_total = pages_total;
-      this.pages_read = 0;
-      this.rating = 0;
-      this.categories = [];
-      this.complete = complete;
-    }
-  }
+/* imports*/
+import { Book } from './book';
+import { extractID, toggleComplete } from './helpers'
+import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
+import { displayTags } from './tags'
 
 function updateDisplay() {
     document.querySelector("main").innerHTML = "";
@@ -69,7 +64,7 @@ function createBookCard (book, index) {
         if ( pages_read < 0 | !pages_read ) { 
             return }
         book.pages_read = pages_read
-        updateLocalStorage();
+        updateLocalStorage(library);
         updateDisplay();
     });
     contents.appendChild(progressBar)    
@@ -88,7 +83,7 @@ function createBookCard (book, index) {
         rated.style.width = event.layerX + '%' // set the width of the filled out stars
         book.rating = event.layerX;
         bar.title = ((book.rating / 20) *10)/10 + ' stars';
-        updateLocalStorage();
+        updateLocalStorage(library);
     });
     ratingsBar.appendChild(rating)
     contents.appendChild(ratingsBar);
@@ -157,97 +152,6 @@ function createBookCard (book, index) {
 
     card.appendChild(cardFace)
     return card;
-}
-
-function displayTags(event) {
-    let index = extractID(this.id); //extract index number from button id
-    const bookCard = document.getElementById(`card ${index}`);
-    
-    // hide book card contents 
-    bookCard.querySelector('.cardFace').style.display = "none";
-    
-    // create tag input div
-    const tagEditContainer = document.createElement('div');
-    tagEditContainer.setAttribute('class', 'tag-edit-container');
-    tagEditContainer.setAttribute('id', `tag edit container ${index}`)
-    const tagContainer = document.createElement('div');
-    tagContainer.setAttribute('class', 'tag-container');
-    tagContainer.setAttribute('id', `tag container ${index}`)
-    const tagInput = document.createElement('input');
-    tagInput.setAttribute('id', `tag input ${index}`)
-    tagContainer.appendChild(tagInput);
-    tagInput.addEventListener('keyup', (event) => {
-        if(tagInput.value != '') {
-            if (event.key === 'Enter'){
-                event.target.value.split(',').forEach(tag => {
-                    library[index].categories.push(tag);
-                    updateLocalStorage();
-                });
-                addTags(event.target.id);
-                tagInput.value = '';
-            }
-        }
-    });
-    
-    // create 'Done' button
-    const doneButton = document.createElement('i');
-    doneButton.setAttribute('type', 'button');
-    doneButton.innerHTML = 'done'
-    doneButton.setAttribute('title', 'Done')
-    doneButton.setAttribute('class', 'material-icons-round doneButton')
-    doneButton.setAttribute('id', `finish tagging ${index}`)
-    doneButton.addEventListener("click", () => {
-        // updateBook();
-        bookCard.querySelector('.cardFace').style.display = "block";
-        let index = extractID(this.id);
-        document.getElementById(`tag edit container ${index}`).remove()
-        document.getElementById(`finish tagging ${index}`).remove();
-    }); 
-    tagEditContainer.appendChild(tagContainer)
-    
-    bookCard.append(tagEditContainer, doneButton)
-    
-    addTags(index);
-    tagInput.focus();
-}
-
-// removes already present tags before displaying the current ones
-function clearTags(container) {
-    container.querySelectorAll('.tag').forEach(tag => {
-        tag.parentElement.removeChild(tag);
-    })
-}
-
-function addTags(id) {
-    let index = extractID(id); //extract index number from id if needed
-    let book = library[index];
-    const tagContainer = document.getElementById(`tag container ${index}`)
-    clearTags(tagContainer);
-    book.categories.slice().reverse().forEach(tag => {
-        tagContainer.prepend(createTag(tag));
-    });
-}
-
-function createTag(label) {
-    const div = document.createElement('div');
-    div.setAttribute('class', 'tag');
-    const span = document.createElement('span');
-    span.innerHTML = label;
-    const closeIcon = document.createElement('i');
-    closeIcon.innerHTML = 'close';
-    closeIcon.setAttribute('class', 'material-icons');
-    closeIcon.setAttribute('data-item', label);
-    closeIcon.addEventListener('click', (event) => {
-        const index = extractID(event.target.parentNode.parentNode.id)
-        const book = library[index];
-        labelIndex = book.categories.indexOf(label)
-        book.categories.splice(labelIndex,1)
-        updateLocalStorage();
-        addTags(index);
-        })
-    div.appendChild(span);
-    div.appendChild(closeIcon);
-    return div;
 }
 
 function displayBooks() {
@@ -374,7 +278,7 @@ function addBookToLibrary() {
     );
 
     library.push(newBook);
-    updateLocalStorage(); 
+    updateLocalStorage(library); 
     updateDisplay();
 }
 
@@ -386,20 +290,13 @@ function clearFormFields() {
     }
 }
 
-function toTitle(str) {
-    // returns string with first letter of every word capitalised
-    str = str.toLowerCase();
-    return str.replace(/(^|\s)\S/g, function (letter) {
-        return letter.toUpperCase();
-    });
-}
-
 function updateBook(event) {
     let index = extractID(this.id); //extract index number from button id
     let book = library[index]
-    const contents = document.getElementById(`card ${index}`).querySelector('.content');
+    const bookCard = document.getElementById(`card ${index}`);
+    const contents = bookCard.querySelector('.content');
     const inputs = document.getElementById(`update-input-field${index}`).querySelectorAll('input') 
-    
+
     // basic form validation
     for (let i = 0; i < inputs.length; i++) {
         if (inputs[i].value == "") {
@@ -415,33 +312,20 @@ function updateBook(event) {
     contents.querySelector('.bookAuthor').innerHTML = book.author
     contents.querySelector('.bookAuthor').title = `Author: "${book.author}"`
     book.pages_total = inputs[2].value;
-    updateLocalStorage();
+    updateLocalStorage(library);
     // remove the form
     document.getElementById(`update-input-field${index}`).remove()
+
     // display book card contents 
-    contents.style.display = "block";
+    bookCard.querySelector('.cardFace').style.display = "block";
 }
 
-function toggleComplete(event) {
-    let index = extractID(this.id); //extract index number from button id
-    let book = library[index];
-    book.complete = !book.complete;
-    updateLocalStorage();
 
-    const button = document.getElementById(this.id)
-    if (book.complete) {
-        button.innerHTML = "check_circle_outline";
-        button.title = "Mark as Incomplete";
-    } else {
-        button.innerHTML = "visibility";
-        button.title = "Mark as Complete";
-    }
-}
 
 function removeFromLibrary(event) {
     let index = extractID(this.id); //extract index number from button id
     library.splice(index, 1);
-    updateLocalStorage();
+    updateLocalStorage(library);
     updateDisplay();
 }
 
@@ -516,27 +400,7 @@ function editContents(event) {
     titleInput.focus();
 }
 
-function extractID(string) {
-    return string.replace(/\D/g,'');
-}
 
-function updateLocalStorage() {
-    // store library in local storage
-    localStorage.setItem(`library`, JSON.stringify(library));
-}
+let library = restoreFromLocalStorage();
+displayBooks(library)
 
-function restoreFromLocalStorage() {
-    // pull library from local storage when page is refreshed
-    if (!localStorage.library) {
-        displayBooks(library);
-    } 
-    else {
-        let objects = localStorage.getItem("library");
-        objects = JSON.parse(objects);
-        library = objects;
-        displayBooks(library);
-    }
-}
-
-let library = [];
-restoreFromLocalStorage();
