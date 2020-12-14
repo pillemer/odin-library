@@ -1,0 +1,24 @@
+{
+  "name": "odin-library",
+  "version": "1.0.0",
+  "description": "Add all your books and mark your progress!",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pillemer/odin-library.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pillemer/odin-library/issues"
+  },
+  "homepage": "https://github.com/pillemer/odin-library#readme",
+  "devDependencies": {
+    "webpack": "^5.10.1",
+    "webpack-cli": "^4.2.0"
+  }
+}

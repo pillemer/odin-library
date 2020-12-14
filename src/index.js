@@ -1,6 +1,7 @@
 /* 
 TODO:
-- migrate the whole sheband into webpack
+- migrate the whole shebang into webpack
+- update GHpages to work with the webpacked version
 
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
