@@ -1,10 +1,10 @@
 import { addBookToLibrary, removeFromLibrary } from './updateLibrary'
 import { clearFormFields, setToggleImage, extractID } from './helpers'
 import { tagButton, completeButton } from './buttons'
-import { updateLocalStorage, restoreFromLocalStorage } from './localStorage'
-import { updateBook } from './updateBook'
+import { restoreFromLocalStorage } from './localStorage'
+import { updateBook, updateBookmark, updateRating } from './updateBook'
 
-export function newBookFormCard() {
+export function newBookFormCard () {
     const formCard = document.createElement('div')
     formCard.className = 'card';
     formCard.id = 'newBookForm';
@@ -118,23 +118,8 @@ export function createBookCard (book, index) {
     progressBar.setAttribute('id', `progress ${index}`);
     progressBar.setAttribute('value', book.pages_read);
     progressBar.setAttribute('title', `You're on page ${book.pages_read} out of ${book.pages_total}.`)
-    progressBar.addEventListener("click", () => {
-
-        // TODO: migrate this from prompt to an HTML popup form
-        
-        // not updating library, problem is this needs to be a separate function 
-
-        let pages_read = parseInt(prompt('What page are you on?'))
-        if (pages_read >= book.pages_total) {
-            pages_read = book.pages_total
-        } 
-        if ( pages_read < 0 | !pages_read ) { 
-            return }
-        book.pages_read = pages_read
-        updateLocalStorage(library);
-        updateDisplay();
-    });
-    contents.appendChild(progressBar)    
+    progressBar.addEventListener("click", updateBookmark);
+    contents.appendChild(progressBar);
 
     //add a star rating  
     const ratingsBar = document.createElement('div')
@@ -144,15 +129,8 @@ export function createBookCard (book, index) {
     rating.className = 'rating';
     rating.style.width = book.rating + '%'; // dislpay the rating
     ratingsBar.setAttribute('id',`rating ${index}`)
-    ratingsBar.addEventListener('click', (event) => {
-        // not updating library, problem is this needs to be a separate function 
-        const bar = document.getElementById(`rating ${index}`)
-        const rated = bar.querySelector('.rating')
-        rated.style.width = event.layerX + '%' // set the width of the filled out stars
-        book.rating = event.layerX;
-        bar.title = ((book.rating / 20) *10)/10 + ' stars';
-        updateLocalStorage(library);
-    });
+    ratingsBar.addEventListener('click', updateRating);
+
     ratingsBar.appendChild(rating)
     contents.appendChild(ratingsBar);
 
@@ -206,7 +184,7 @@ export function createBookCard (book, index) {
     return card;
 }
 
-function editContents(event) {
+function editContents() {
     let index = extractID(this.id); //extract index number from button id
     let library = restoreFromLocalStorage();
     let book = library[index]

@@ -1,7 +1,7 @@
 /* 
 TODO:
-- migrate the whole shebang into webpack
-- refactor all the code into modules
+- DONE - migrate the whole shebang into webpack
+- DONE - refactor all the code into modules
 - update GHpages to work with the webpacked version
 
 - DONE - add ability to edit book info! 
@@ -21,7 +21,7 @@ TODO:
 BUGS:
 - DONE - clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
 - DONE - clicking the tag button while the tags are open on another card makes them disappear
-- progress bar and ratings not saved to library 
+- DONE - progress bar and ratings not saved to library 
 */
 
 import { restoreFromLocalStorage } from './localStorage'

@@ -3,7 +3,7 @@ import { updateDisplay } from './dislpay'
 import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
 import { Book } from './book'
 
-export function removeFromLibrary(event) {
+export function removeFromLibrary() {
     let index = extractID(this.id); //extract index number from button id
     let library = restoreFromLocalStorage();
     library.splice(index, 1);

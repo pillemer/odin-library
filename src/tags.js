@@ -61,7 +61,7 @@ function enterTag(event) {
     }
 }
 
-export function displayTags(event) {
+export function displayTags() {
     let index = extractID(this.id); //extract index number from button id
     const bookCard = document.getElementById(`card ${index}`);
     
