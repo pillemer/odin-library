@@ -1,5 +1,5 @@
-import { extractID } from 'helpers'
-import { restoreFromLocalStorage, updateLocalStorage } from 'localStorage'
+import { extractID } from './helpers'
+import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
 
 function addTags(id) {
     // dislpays the tags whenever a 

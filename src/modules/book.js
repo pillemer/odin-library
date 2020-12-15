@@ -1,4 +1,4 @@
-import { toTitle } from 'helpers';
+import { toTitle } from './helpers';
 
 export class Book {
     constructor(title, author, pages_total, complete = false) {

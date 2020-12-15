@@ -1,5 +1,5 @@
-import { displayTags } from 'tags'
-import { toggleComplete } from 'updateBook'
+import { displayTags } from './tags'
+import { toggleComplete } from './updateBook'
 
 export function tagButton(index) {
     const button = document.createElement('i');
