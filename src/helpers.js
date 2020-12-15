@@ -20,3 +20,11 @@ export function setToggleImage (button, read = false) {
         button.setAttribute('title', "Mark as Complete");
     }   
 }
+
+export function clearFormFields() {
+    const fields = document.getElementById('newBookForm').querySelectorAll("input");
+    for (let i = 0; i < fields.length - 1; i++) {
+        fields[i].value = "";
+        fields[fields.length - 1].checked = false;
+    }
+}
