@@ -1,5 +1,5 @@
-import { restoreFromLocalStorage } from './localStorage'
-import { newBookFormCard, createBookCard } from './cards'
+import { restoreFromLocalStorage } from 'localStorage'
+import { newBookFormCard, createBookCard } from 'cards'
 
 export function updateDisplay() {
     let library = restoreFromLocalStorage();

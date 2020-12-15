@@ -1,8 +1,8 @@
-import { addBookToLibrary, removeFromLibrary } from './updateLibrary'
-import { clearFormFields, setToggleImage, extractID } from './helpers'
-import { tagButton, completeButton } from './buttons'
-import { restoreFromLocalStorage } from './localStorage'
-import { updateBook, updateBookmark, updateRating } from './updateBook'
+import { addBookToLibrary, removeFromLibrary } from 'updateLibrary'
+import { clearFormFields, setToggleImage, extractID } from 'helpers'
+import { tagButton, completeButton } from 'buttons'
+import { restoreFromLocalStorage } from 'localStorage'
+import { updateBook, updateBookmark, updateRating } from 'updateBook'
 
 export function newBookFormCard () {
     const formCard = document.createElement('div')

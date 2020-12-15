@@ -1,7 +1,7 @@
-import { extractID } from './helpers'
-import { updateDisplay } from './dislpay'
-import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
-import { Book } from './book'
+import { extractID } from 'helpers'
+import { updateDisplay } from 'dislpay'
+import { restoreFromLocalStorage, updateLocalStorage } from 'localStorage'
+import { Book } from 'book'
 
 export function removeFromLibrary() {
     let index = extractID(this.id); //extract index number from button id

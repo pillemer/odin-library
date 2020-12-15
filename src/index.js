@@ -24,8 +24,8 @@ BUGS:
 - DONE - progress bar and ratings not saved to library 
 */
 
-import { restoreFromLocalStorage } from './localStorage'
-import { displayBooks } from './dislpay'
+import { restoreFromLocalStorage } from 'modules/localStorage'
+import { displayBooks } from 'modules/dislpay'
 
 let library = restoreFromLocalStorage();
 displayBooks(library)

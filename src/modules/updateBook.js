@@ -1,6 +1,6 @@
-import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
-import { extractID, setToggleImage } from './helpers'
-import { updateDisplay } from './dislpay'
+import { restoreFromLocalStorage, updateLocalStorage } from 'localStorage'
+import { extractID, setToggleImage } from 'helpers'
+import { updateDisplay } from 'dislpay'
 
 export function toggleComplete() {
     let index = extractID(this.id);
