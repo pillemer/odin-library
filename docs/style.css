@@ -10,7 +10,7 @@ body {
     min-width: 100vh; /* is this doing anything? */
 }
 
-progress {
+progress[value] {
     opacity: 0.7;
 }
 
@@ -140,7 +140,7 @@ input {
     text-align: center;
     align-content: center;
     background: transparent;
-    border-style: double;
+    border-style: none;
     border-radius: 5px;
     font-size: inherit;
     width: 210px;
@@ -152,8 +152,18 @@ input#title {
     margin-top: 30px;
 }
 
+.form-group {
+    white-space: nowrap;
+}
 
-/* card buttons */
+.form-group input {
+    width: 1rem;
+}
+
+.material-icons-round {
+    cursor: pointer;
+}
+
 .cardButtons {
     display: flex;
     width: 10em;
@@ -180,7 +190,7 @@ input#title {
 }
 
 .completeButton:hover {
-    color: indigo;
+    color: green;
 }
 
 .tag-edit-container {

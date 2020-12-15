@@ -56,14 +56,15 @@ export function newBookFormCard () {
     // create 'Completed' checkbox 
     const completedDiv = document.createElement('div');
     completedDiv.setAttribute('class','form-group')
-    const completedLabel = document.createElement('label');
     const completedInput = document.createElement('input');
-    completedDiv.append(completedInput, completedLabel); // could be problematic on different browsers? 
-    completedLabel.textContent = 'Completed?';
-    completedLabel.setAttribute('for', 'completed');
     completedInput.setAttribute('id', 'completed');
     completedInput.setAttribute('type', 'checkbox');
     completedInput.setAttribute('name', 'completed');
+    completedDiv.appendChild(completedInput);
+    const completedLabel = document.createElement('label');
+    completedLabel.textContent = 'Completed?';
+    completedLabel.setAttribute('for', 'completed');
+    completedDiv.appendChild(completedLabel);
 
     // create 'Submit' button
     const submitButton = document.createElement('i');
