@@ -10,10 +10,12 @@ export function newBookFormCard () {
     formCard.id = 'newBookForm';
     
     // create the 'Add New' button
-    const addNewButton = document.createElement('button');
-    addNewButton.id = 'addNewButton';
-    addNewButton.title = 'Add new book to Library';
-    addNewButton.textContent = '+'
+    const addNewButton = document.createElement('i');
+    addNewButton.setAttribute('type', 'button')
+    addNewButton.setAttribute('title', 'Add new book to Library');
+    addNewButton.setAttribute('id', 'addNewButton');
+    addNewButton.setAttribute('class','material-icons-round')
+    addNewButton.innerHTML = 'add'
     addNewButton.addEventListener("click", () => {
             document.querySelector("#input-field").style.display = "initial";
             addNewButton.style.display = "none";
