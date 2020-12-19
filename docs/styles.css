@@ -2,6 +2,18 @@
   font-family: spaceGrotesk;
   src: url(fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf);
 }
+.card-style {
+  text-align: center;
+  align-content: center;
+  background: transparent;
+  border-style: none;
+  border-radius: 5px;
+  font-family: spaceGrotesk, sans-serif;
+  font-size: inherit;
+  width: 210px;
+  box-sizing: border-box;
+  margin: 15px 15px 15px;
+}
 body {
   font-family: spaceGrotesk, sans-serif;
   background: url(img/wood.png);
@@ -124,6 +136,7 @@ input {
   background: transparent;
   border-style: none;
   border-radius: 5px;
+  font-family: spaceGrotesk, sans-serif;
   font-size: inherit;
   width: 210px;
   box-sizing: border-box;
@@ -154,10 +167,16 @@ input#title {
   background: transparent;
   border-style: none;
   border-radius: 5px;
+  font-family: spaceGrotesk, sans-serif;
   font-size: inherit;
   width: 210px;
   box-sizing: border-box;
   margin: 15px 15px 15px;
+  margin-top: 68px;
+}
+.editForm input {
+  margin-left: 5px;
+  margin-right: 35px;
 }
 .buttonDiv {
   display: flex;

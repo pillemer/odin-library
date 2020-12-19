@@ -9,6 +9,19 @@
 @primary-text-color: #f5deb3;
 @primary-button-color: #b0bfee;
 
+// mixins
+.card-style {
+    text-align: center;
+	align-content: center;
+	background: transparent;
+	border-style: none;
+    border-radius: 5px;
+    font-family: spaceGrotesk, sans-serif;
+	font-size: inherit;
+	width: 210px;
+	box-sizing: border-box;
+	margin: 15px 15px 15px;
+}
 
 
 body {
@@ -17,14 +30,17 @@ body {
 	background-size: auto;
 	min-width: 100vh;
 }
+
 progress[value] {
 	opacity: 0.7;
 }
+
 progress {
 	&:hover {
 		opacity: 1;
 	}
 }
+
 .rating-box {
 	position: relative;
 	vertical-align: middle;
@@ -122,7 +138,7 @@ main {
 &::placeholder {
 	color: @primary-text-color;
 }
-#input-field {
+#input-field { 
 	display: none;
 	margin-left: 5px;
 	margin-right: 35px;
@@ -130,15 +146,7 @@ main {
 }
 input {
 	outline: none;
-	text-align: center;
-	align-content: center;
-	background: transparent;
-	border-style: none;
-	border-radius: 5px;
-	font-size: inherit;
-	width: 210px;
-	box-sizing: border-box;
-	margin: 15px 15px 15px;
+    .card-style();
 	&:hover {
 		&::placeholder {
 			opacity: 0.7;
@@ -164,15 +172,12 @@ input#title {
 	}
 }
 .editForm {
-	text-align: center;
-	align-content: center;
-	background: transparent;
-	border-style: none;
-	border-radius: 5px;
-	font-size: inherit;
-	width: 210px;
-	box-sizing: border-box;
-	margin: 15px 15px 15px;
+    .card-style();
+    margin-top: 68px;
+    input {
+        margin-left: 5px;
+        margin-right: 35px;
+    }
 }
 .buttonDiv {
 	display: flex;
