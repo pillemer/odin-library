@@ -78,7 +78,7 @@ export function displayTags() {
     const tagInput = document.createElement('input');
     tagInput.setAttribute('id', `tag input ${index}`)
     tagContainer.appendChild(tagInput);
-    tagInput.addEventListener('keyup', enterTag);
+    tagInput.addEventListener('keyup', enterTag); // adds new tag on 'Enter'
     
     // create 'Done' button
     const doneButton = document.createElement('i');

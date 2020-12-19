@@ -1,8 +1,7 @@
 import { addBookToLibrary, removeFromLibrary } from './updateLibrary'
-import { clearFormFields, setToggleImage, extractID } from './helpers'
+import { clearFormFields, setToggleImage } from './helpers'
 import { tagButton, completeButton } from './buttons'
-import { restoreFromLocalStorage } from './localStorage'
-import { updateBook, updateBookmark, updateRating } from './updateBook'
+import { updateBookmark, updateRating, editContents } from './updateBook'
 
 export function newBookFormCard () {
     const formCard = document.createElement('div')
@@ -19,6 +18,7 @@ export function newBookFormCard () {
     addNewButton.addEventListener("click", () => {
             document.querySelector("#input-field").style.display = "initial";
             addNewButton.style.display = "none";
+            titleInput.focus();
         });
     formCard.appendChild(addNewButton)
 
@@ -27,33 +27,34 @@ export function newBookFormCard () {
     newBookForm.id = 'input-field' 
     
     // create 'Title' field
-    const titleDiv = document.createElement('div');
     const titleInput = document.createElement('input');
-    titleDiv.appendChild(titleInput); 
     titleInput.setAttribute('placeholder', 'Book Title');
     titleInput.setAttribute('id', 'title');
     titleInput.setAttribute('type', 'text'); //set character limit?
     titleInput.setAttribute('name', 'title')
+    titleInput.setAttribute('oninput', "classList.remove('invalid');")
+    newBookForm.appendChild(titleInput);
 
     // create 'Author' field
-    const authorDiv = document.createElement('div');
     const authorinput = document.createElement('input');
-    authorDiv.appendChild(authorinput); 
     authorinput.setAttribute('placeholder', 'Author')
     authorinput.setAttribute('id', 'author');
     authorinput.setAttribute('type', 'text'); //set character limit?
     authorinput.setAttribute('name', 'author')
-    
+    authorinput.setAttribute('oninput', "classList.remove('invalid');")
+    newBookForm.appendChild(authorinput);
+
     // create 'Book Length' field
-    const bookLengthDiv = document.createElement('div');
     const bookLengthinput = document.createElement('input');
-    bookLengthDiv.appendChild(bookLengthinput); 
     bookLengthinput.setAttribute('placeholder', 'Page count');
     bookLengthinput.setAttribute('id', 'bookLength');
     bookLengthinput.setAttribute('type', 'number'); //set character limit?
     bookLengthinput.setAttribute('name', 'bookLength')
-    bookLengthinput.setAttribute('min', '0');
-    bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
+    bookLengthinput.setAttribute('min', '1');
+    bookLengthinput.setAttribute('oninput', "validity.valid||(value='');");
+    bookLengthinput.setAttribute('oninput', "classList.remove('invalid');")
+
+    newBookForm.appendChild(bookLengthinput);
 
     // create 'Completed' checkbox 
     const completedDiv = document.createElement('div');
@@ -67,6 +68,11 @@ export function newBookFormCard () {
     completedLabel.textContent = 'Completed?';
     completedLabel.setAttribute('for', 'completed');
     completedDiv.appendChild(completedLabel);
+    newBookForm.appendChild(completedDiv);
+
+    // create a button div
+    const buttonDiv = document.createElement('div')
+    buttonDiv.setAttribute('class', 'buttonDiv')
 
     // create 'Submit' button
     const submitButton = document.createElement('i');
@@ -75,6 +81,7 @@ export function newBookFormCard () {
     submitButton.setAttribute('class','material-icons-round')
     submitButton.innerHTML = 'done'
     submitButton.addEventListener("click", addBookToLibrary);
+    buttonDiv.appendChild(submitButton);
 
     // create 'Cancel' button
     const cancelButton = document.createElement('i');
@@ -88,15 +95,9 @@ export function newBookFormCard () {
         document.querySelector("#input-field").style.display = "none";
         clearFormFields();
     }); 
+    buttonDiv.appendChild(cancelButton);
 
-    // make it all one big happy div family
-    newBookForm.append( titleDiv,  // 'append' could be problematic on different browsers? 
-                        authorDiv, 
-                        bookLengthDiv, 
-                        completedDiv, 
-                        submitButton, 
-                        cancelButton,
-                        );
+    newBookForm.appendChild(buttonDiv);
 
     formCard.appendChild(newBookForm)
     return formCard
@@ -185,76 +186,4 @@ export function createBookCard (book, index) {
 
     card.appendChild(cardFace)
     return card;
-}
-
-function editContents() {
-    let index = extractID(this.id); //extract index number from button id
-    let library = restoreFromLocalStorage();
-    let book = library[index]
-    const bookCard = document.getElementById(`card ${index}`);
-    // hide book card contents 
-    bookCard.querySelector('.cardFace').style.display = "none";
-
-    // create the form 
-    const editBookForm = document.createElement('form')
-    editBookForm.id = `update-input-field${index}` 
-
-    // create 'Title' field
-    const titleDiv = document.createElement('div');
-    const titleInput = document.createElement('input');
-    titleDiv.appendChild(titleInput); 
-    titleInput.setAttribute('value', book.title);
-    titleInput.setAttribute('type', 'text');
-    titleInput.setAttribute('name', 'Edit Title')
-    titleInput.minlength = 1;
-
-    // create 'Author' field
-    const authorDiv = document.createElement('div');
-    const authorinput = document.createElement('input');
-    authorDiv.appendChild(authorinput); 
-    authorinput.setAttribute('value', book.author)
-    authorinput.setAttribute('type', 'text');
-    authorinput.setAttribute('name', 'Edit Author')
-    authorinput.required = true;
-
-    // create 'Book Length' field
-    const bookLengthDiv = document.createElement('div');
-    const bookLengthinput = document.createElement('input');
-    bookLengthDiv.appendChild(bookLengthinput); 
-    bookLengthinput.setAttribute('value', book.pages_total);
-    bookLengthinput.setAttribute('type', 'number');
-    bookLengthinput.setAttribute('name', 'Edit Total Pages')
-    bookLengthinput.setAttribute('min', '0');
-    bookLengthinput.setAttribute('oninput',"validity.valid||(value='');");
-    bookLengthinput.required = true;
-
-    // create 'Submit' button
-    const submitButton = document.createElement('i');
-    submitButton.setAttribute('type', 'button');
-    submitButton.setAttribute('class','material-icons-round')
-    submitButton.setAttribute('id', `update ${index}`)
-    submitButton.innerHTML = 'done'
-    submitButton.addEventListener("click", updateBook);
-
-    // create 'Cancel' button
-    const cancelButton = document.createElement('i');
-    cancelButton.setAttribute('type', 'button');
-    cancelButton.setAttribute('class','material-icons-round')
-    cancelButton.innerHTML = 'close';
-    cancelButton.formNoValidate = true;
-    cancelButton.addEventListener('click', () => { 
-        bookCard.querySelector('.cardFace').style.display = "initial";
-        let index = extractID(this.id);
-        document.querySelector(`#update-input-field${index}`).remove();
-    }); 
-
-    editBookForm.append(titleDiv, 
-                        authorDiv, 
-                        bookLengthDiv, 
-                        submitButton,
-                        cancelButton,
-                        );
-                        
-    bookCard.appendChild(editBookForm)
-    titleInput.focus();
 }

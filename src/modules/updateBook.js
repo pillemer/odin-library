@@ -1,6 +1,9 @@
 import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
 import { extractID, setToggleImage } from './helpers'
 import { updateDisplay } from './dislpay'
+import { createEditBookForm } from './formCard'
+import { validate } from './formValidation'
+
 
 export function toggleComplete() {
     let index = extractID(this.id);
@@ -21,11 +24,8 @@ export function updateBook() {
     const inputs = document.getElementById(`update-input-field${index}`).querySelectorAll('input') 
 
     // basic form validation
-    for (let i = 0; i < inputs.length; i++) {
-        if (inputs[i].value == "") {
-        alert("input cannot be left empty!");
+    if (!validate(inputs)) {
         return;
-        }
     }
 
     book.title = inputs[0].value;
@@ -68,4 +68,14 @@ export function updateRating (event) {
     book.rating = event.layerX;
     bar.title = ((book.rating / 20) *10)/10 + ' stars';
     updateLocalStorage(library);
+}
+
+export function editContents() {
+    let index = extractID(this.id);
+    let library = restoreFromLocalStorage();
+    let book = library[index]
+    const bookCard = document.getElementById(`card ${index}`);
+    bookCard.querySelector('.cardFace').style.display = "none"; 
+    const editBookForm = createEditBookForm(index, book, bookCard)
+    bookCard.appendChild(editBookForm)
 }

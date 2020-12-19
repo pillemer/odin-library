@@ -2,6 +2,7 @@ import { extractID } from './helpers'
 import { updateDisplay } from './dislpay'
 import { restoreFromLocalStorage, updateLocalStorage } from './localStorage'
 import { Book } from './book'
+import { validate } from './formValidation'
 
 export function removeFromLibrary() {
     let index = extractID(this.id); //extract index number from button id
@@ -11,14 +12,11 @@ export function removeFromLibrary() {
     updateDisplay();
 }
 export function addBookToLibrary() {
-    const inputFields = document.getElementById('newBookForm').querySelectorAll("input");
+    const inputFields = Array.from(document.getElementById('newBookForm').querySelectorAll("input"));
+    inputFields.slice(0, 3);
 
-    // form validation
-    for (let i = 0; i < inputFields.length - 1; i++) {
-        if (inputFields[i].value == "") {
-        alert("fill in all the details before submitting");
-        return;
-        }
+    if (!validate(inputFields)) {
+        return
     }
 
     const newBook = new Book(
