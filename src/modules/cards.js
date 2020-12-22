@@ -155,7 +155,7 @@ export function createBookCard (book, index) {
     cardFace.appendChild(contents)
 
     const buttonDiv = document.createElement('div')
-    buttonDiv.setAttribute('class', 'cardButtons')
+    buttonDiv.setAttribute('class', 'buttonDiv')
 
     // add a 'delete' button
     const deleteButton = document.createElement('i');

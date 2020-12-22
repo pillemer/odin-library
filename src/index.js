@@ -2,7 +2,7 @@
 TODO:
 - DONE - migrate the whole shebang into webpack
 - DONE - refactor all the code into modules
-- update GHpages to work with the webpacked version
+- DONE - update GHpages to work with the webpacked version
 
 - DONE - add ability to edit book info! 
 - DONE - add bookmark bar to show how far along the book you are 
