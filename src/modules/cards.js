@@ -117,13 +117,16 @@ export function createBookCard (book, index) {
     contents.className = "content";
 
     // add a progress bar
+    const progressDiv = document.createElement('div');
+    progressDiv.setAttribute('class', 'progress-box')
     const progressBar = document.createElement('progress')
     progressBar.setAttribute('max', book.pages_total);
     progressBar.setAttribute('id', `progress ${index}`);
     progressBar.setAttribute('value', book.pages_read);
     progressBar.setAttribute('title', `You're on page ${book.pages_read} out of ${book.pages_total}.`)
     progressBar.addEventListener("click", updateBookmark);
-    contents.appendChild(progressBar);
+    progressDiv.appendChild(progressBar)
+    contents.appendChild(progressDiv);
 
     //add a star rating  
     const ratingsBar = document.createElement('div')
@@ -134,7 +137,6 @@ export function createBookCard (book, index) {
     rating.style.width = book.rating + '%'; // dislpay the rating
     ratingsBar.setAttribute('id',`rating ${index}`)
     ratingsBar.addEventListener('click', updateRating);
-
     ratingsBar.appendChild(rating)
     contents.appendChild(ratingsBar);
 

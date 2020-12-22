@@ -22,6 +22,7 @@ BUGS:
 - DONE - clicking the save changes button while two or more edit fields are open closes them all and only saves the changes in the one clicked
 - DONE - clicking the tag button while the tags are open on another card makes them disappear
 - DONE - progress bar and ratings not saved to library 
+- DONE - ratings does not update empty stars title until after refresh
 */
 
 import { restoreFromLocalStorage } from './modules/localStorage'

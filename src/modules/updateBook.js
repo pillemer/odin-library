@@ -63,10 +63,11 @@ export function updateRating (event) {
     let index = extractID(this.id);
     let library = restoreFromLocalStorage();
     const book = library[index];
-    const bar = document.getElementById(`rating ${index}`).querySelector('.rating')
-    bar.style.width = event.layerX + '%' // set the width of the filled out stars
+    const bar = document.getElementById(`rating ${index}`);
+    const filled = bar.querySelector('.rating');
+    filled.style.width = event.layerX + '%' // set the width of the filled out stars
     book.rating = event.layerX;
-    bar.title = ((book.rating / 20) *10)/10 + ' stars';
+    bar.title = `${((book.rating / 20) * 10) / 10} stars`;
     updateLocalStorage(library);
 }
 
