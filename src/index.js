@@ -23,6 +23,8 @@ BUGS:
 - DONE - clicking the tag button while the tags are open on another card makes them disappear
 - DONE - progress bar and ratings not saved to library 
 - DONE - ratings does not update empty stars title until after refresh
+- ratings can be set beyond 5 stars and it looks wrong
+
 */
 
 import { restoreFromLocalStorage } from './modules/localStorage'
