@@ -72,17 +72,22 @@ export function displayTags() {
     const tagEditContainer = document.createElement('div');
     tagEditContainer.setAttribute('class', 'tag-edit-container');
     tagEditContainer.setAttribute('id', `tag edit container ${index}`)
+    
     const tagContainer = document.createElement('div');
     tagContainer.setAttribute('class', 'tag-container');
     tagContainer.setAttribute('id', `tag container ${index}`)
+    tagEditContainer.appendChild(tagContainer);
+
     const tagInput = document.createElement('input');
     tagInput.setAttribute('id', `tag input ${index}`)
-    tagContainer.appendChild(tagInput);
     tagInput.addEventListener('keyup', enterTag); // adds new tag on 'Enter'
+    tagEditContainer.appendChild(tagInput);
     
     // create 'Done' button
+    const buttonDiv = document.createElement('div')
+    buttonDiv.setAttribute('class', 'buttonDiv')
     const doneButton = document.createElement('i');
-    doneButton.setAttribute('type', 'button');
+    buttonDiv.appendChild(doneButton);
     doneButton.innerHTML = 'done'
     doneButton.setAttribute('title', 'Done')
     doneButton.setAttribute('class', 'material-icons-round doneButton')
@@ -93,9 +98,9 @@ export function displayTags() {
         document.getElementById(`tag edit container ${index}`).remove()
         document.getElementById(`finish tagging ${index}`).remove();
     }); 
-    tagEditContainer.appendChild(tagContainer)
+    tagEditContainer.appendChild(buttonDiv)
     
-    bookCard.append(tagEditContainer, doneButton)
+    bookCard.appendChild(tagEditContainer)
     
     addTags(index);
     tagInput.focus();

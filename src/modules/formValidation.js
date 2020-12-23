@@ -1,12 +1,12 @@
 export function validate(inputFields) {
 
+    let validCheck = true;
     for (let i = 0; i < inputFields.length; i++) {
-        
-        console.log(inputFields[i].value)
         if (inputFields[i].value == "") {
             inputFields[i].classList.add('invalid');
-        return false;
+            validCheck = false;
         }
     }
-    return true;
+    console.log(validCheck)
+    return validCheck;
 }

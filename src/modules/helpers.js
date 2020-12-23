@@ -25,6 +25,7 @@ export function clearFormFields() {
     const fields = document.getElementById('newBookForm').querySelectorAll("input");
     for (let i = 0; i < fields.length - 1; i++) {
         fields[i].value = "";
+        fields[i].classList.remove('invalid')
         fields[fields.length - 1].checked = false;
     }
 }
